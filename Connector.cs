@@ -12,58 +12,58 @@ namespace RshCSharpWrapper
 
         #region Allocate & Free memory
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref Types.RshBufferS8 uRshBuffer);
+        public static extern uint UniDriverFreeBuffer(ref Types.BufferS8 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref Types.RshBufferS8 uRshBuffer, uint desiredBufferSize);
+        public static extern uint UniDriverAllocateBuffer(ref Types.BufferS8 uRshBuffer, uint desiredBufferSize);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref Types.RshBufferS16 uRshBuffer);
+        public static extern uint UniDriverFreeBuffer(ref Types.BufferS16 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref Types.RshBufferS16 uRshBuffer, uint desiredBufferSize);
+        public static extern uint UniDriverAllocateBuffer(ref Types.BufferS16 uRshBuffer, uint desiredBufferSize);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref Types.RshBufferS32 uRshBuffer);
+        public static extern uint UniDriverFreeBuffer(ref Types.BufferS32 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref Types.RshBufferS32 uRshBuffer, uint desiredBufferSize);
+        public static extern uint UniDriverAllocateBuffer(ref Types.BufferS32 uRshBuffer, uint desiredBufferSize);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref Types.RshBufferS64 uRshBuffer);
+        public static extern uint UniDriverFreeBuffer(ref Types.BufferS64 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref Types.RshBufferS64 uRshBuffer, uint desiredBufferSize);
+        public static extern uint UniDriverAllocateBuffer(ref Types.BufferS64 uRshBuffer, uint desiredBufferSize);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref Types.RshBufferU8 uRshBuffer);
+        public static extern uint UniDriverFreeBuffer(ref Types.BufferU8 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref Types.RshBufferU8 uRshBuffer, uint desiredBufferSize);
+        public static extern uint UniDriverAllocateBuffer(ref Types.BufferU8 uRshBuffer, uint desiredBufferSize);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref Types.RshBufferU16 uRshBuffer);
+        public static extern uint UniDriverFreeBuffer(ref Types.BufferU16 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref Types.RshBufferU16 uRshBuffer, uint desiredBufferSize);
+        public static extern uint UniDriverAllocateBuffer(ref Types.BufferU16 uRshBuffer, uint desiredBufferSize);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref Types.RshBufferU32 uRshBuffer);
+        public static extern uint UniDriverFreeBuffer(ref Types.BufferU32 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref Types.RshBufferU32 uRshBuffer, uint desiredBufferSize);
+        public static extern uint UniDriverAllocateBuffer(ref Types.BufferU32 uRshBuffer, uint desiredBufferSize);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref Types.RshBufferU64 uRshBuffer);
+        public static extern uint UniDriverFreeBuffer(ref Types.BufferU64 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref Types.RshBufferU64 uRshBuffer, uint desiredBufferSize);
+        public static extern uint UniDriverAllocateBuffer(ref Types.BufferU64 uRshBuffer, uint desiredBufferSize);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref Types.RshBufferDouble uRshBuffer);
+        public static extern uint UniDriverFreeBuffer(ref Types.BufferDouble uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref Types.RshBufferDouble uRshBuffer, uint desiredBufferSize);
+        public static extern uint UniDriverAllocateBuffer(ref Types.BufferDouble uRshBuffer, uint desiredBufferSize);
         #endregion
         /// <summary>
         /// Выполняет подключение к драйверу устройства
@@ -86,133 +86,133 @@ namespace RshCSharpWrapper
         #region Init
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.RshInitDMA initStructure);
+        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.InitDMA initStructure);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.RshInitMemory initStructure);
+        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.InitMemory initStructure);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.RshInitGSPF initStructure);
+        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.InitGSPF initStructure);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.RshInitVoltmeter initStructure);
+        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.InitVoltmeter initStructure);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.RshInitPort initStructure);
+        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.InitPort initStructure);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.RshInitDAC initStructure);
+        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref Types.InitDAC initStructure);
 
         #endregion
 
         #region Get
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshS8 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.S8 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshU8 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.U8 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshS16 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.S16 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshU16 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.U16 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshS32 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.S32 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshU32 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.U32 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshS64 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.S64 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshU64 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.U64 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshDouble value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.Double value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshU8P value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.U8P value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshU16P value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.U16P value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshS8P value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.S8P value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshS16P value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.S16P value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBufferS8 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BufferS8 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBufferU8 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BufferU8 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBufferS16 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BufferS16 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBufferU16 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BufferU16 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBufferS32 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BufferS32 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBufferU32 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BufferU32 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBufferS64 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BufferS64 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBufferU64 value);
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BufferU64 value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBufferDouble value);  
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BufferDouble value);  
         
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBoardPortInfo value);  
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.BoardPortInfo value);  
 
         #endregion
 
         #region GetData
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.RshBufferU8 uRshBuffer);
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.BufferU8 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.RshBufferS8 uRshBuffer);
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.BufferS8 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.RshBufferU16 uRshBuffer);
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.BufferU16 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.RshBufferS16 uRshBuffer);
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.BufferS16 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.RshBufferU32 uRshBuffer);
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.BufferU32 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.RshBufferS32 uRshBuffer);
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.BufferS32 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.RshBufferU64 uRshBuffer);
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.BufferU64 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.RshBufferS64 uRshBuffer);
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.BufferS64 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.RshBufferDouble uRshBuffer);
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getDataMode, ref Types.BufferDouble uRshBuffer);
 
         #endregion
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetError(uint errorCode, ref Types.RshU16P value, uint language);
+        public static extern uint UniDriverGetError(uint errorCode, ref Types.U16P value, uint language);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverGetRegisteredDeviceName(uint index, ref Types.RshU16P value);
+        public static extern uint UniDriverGetRegisteredDeviceName(uint index, ref Types.U16P value);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint UniDriverCloseDeviceHandle(IntPtr deviceHandle);

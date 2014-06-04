@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RshCSharpWrapper
 {
-    namespace RshDevice
+    namespace Device
     {       
         /*
         [System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.AutoDual)]
