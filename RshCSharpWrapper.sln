@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RshCSharpWrapper", "RshCSharpWrapper.csproj", "{918C5BCD-997E-43E7-947B-7B4703A09645}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RshCSharpWrapper", "RshCSharpWrapper\RshCSharpWrapper.csproj", "{918C5BCD-997E-43E7-947B-7B4703A09645}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RshCSharpWrapperTest", "..\RshCSharpWrapperTest\RshCSharpWrapperTest.csproj", "{7781DC28-4550-4E19-9D83-6FA933F643DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RshCSharpWrapperTest", "RshCSharpWrapperTest\RshCSharpWrapperTest.csproj", "{7781DC28-4550-4E19-9D83-6FA933F643DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
