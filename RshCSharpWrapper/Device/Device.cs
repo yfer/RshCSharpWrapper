@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RshCSharpWrapper.Device
 {
-    public class Device
+    public class Device : IDisposable
     {
         private IntPtr deviceHandle;
         private Types.BufferS16 bufferS16;
@@ -35,39 +35,45 @@ namespace RshCSharpWrapper.Device
             bufferS32 = new Types.BufferS32(0);
             bufferDouble = new Types.BufferDouble(0);
         }
-        public Device(string deviceName)
+        public Device(string deviceName):this()
         {
-            try
-            {
-                deviceHandle = IntPtr.Zero;
-
-                bufferU16 = new Types.BufferU16(0);
-                bufferS16 = new Types.BufferS16(0);
-                bufferS32 = new Types.BufferS32(0);
-                bufferDouble = new Types.BufferDouble(0);
-
-                EstablishDriverConnection(deviceName);
-            }
-            catch (Exception ex)
-            {
-
-            }
+            EstablishDriverConnection(deviceName);
         }
+
+        #region Valid implimentation of unmanaged resource destructor and IDisposable() http://msdn.microsoft.com/en-us/library/system.idisposable.aspx
+        bool disposed = false;
         ~Device()
         {
-            try
-            {
-                Connector.UniDriverFreeBuffer(ref bufferS16);
-                Connector.UniDriverFreeBuffer(ref bufferU16);
-                Connector.UniDriverFreeBuffer(ref bufferS32);
-                Connector.UniDriverFreeBuffer(ref bufferDouble);
-                Connector.UniDriverCloseDeviceHandle(deviceHandle);
-            }
-            catch (Exception ex)
-            {
-
-            }
+            Dispose(false);
         }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        public virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any other managed objects here. 
+                //
+            }
+
+            // Free any unmanaged objects here. 
+            //
+
+            Connector.UniDriverFreeBuffer(ref bufferS16);
+            Connector.UniDriverFreeBuffer(ref bufferU16);
+            Connector.UniDriverFreeBuffer(ref bufferS32);
+            Connector.UniDriverFreeBuffer(ref bufferDouble);
+            Connector.UniDriverCloseDeviceHandle(deviceHandle);
+
+            disposed = true;
+        }
+        #endregion
 
         public API EstablishDriverConnection(string deviceName)
         {
