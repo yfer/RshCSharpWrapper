@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace RshCSharpWrapper.Device
@@ -16,14 +19,6 @@ namespace RshCSharpWrapper.Device
         private short[] tmpBufferShort = new short[1]; // буфер используется в GetData для копирования данных типа unsigned
         private int[] tmpBufferInt = new int[1];
 
-        private uint operationStatus;
-        public API OperationStatus
-        {
-            get
-            {
-                return (API)(operationStatus & MASK_RSH_ERROR);
-            }
-        }
         private const uint MASK_RSH_ERROR = 0xffff0000;
         private const uint MASK_WINAPI_ERROR = 0x0000ffff;
         public Device()
@@ -77,6 +72,7 @@ namespace RshCSharpWrapper.Device
 
         public API EstablishDriverConnection(string deviceName)
         {
+            uint operationStatus;
             try
             {
                 operationStatus = Connector.UniDriverGetDeviceHandle(deviceName, out deviceHandle);
@@ -94,6 +90,7 @@ namespace RshCSharpWrapper.Device
 
         public API CloseDriverConnection()
         {
+            uint operationStatus;
             try
             {
                 operationStatus = Connector.UniDriverCloseDeviceHandle(deviceHandle);
@@ -108,9 +105,10 @@ namespace RshCSharpWrapper.Device
             }
             return (API)(operationStatus & MASK_RSH_ERROR);
         }
-
+       
         public API Connect(uint idNumber, CONNECT_MODE mode = CONNECT_MODE.BASE)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
             try
             {
@@ -129,6 +127,7 @@ namespace RshCSharpWrapper.Device
 
         public API Init(InitDMA initStructure, INIT_MODE mode = INIT_MODE.INIT)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             Types.InitDMA iS = new Types.InitDMA(0); // для вызова своего конструктора
@@ -185,6 +184,7 @@ namespace RshCSharpWrapper.Device
         }
         public API Init(InitMemory initStructure, INIT_MODE mode = INIT_MODE.INIT)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             Types.InitMemory iS = new Types.InitMemory(0);
@@ -251,6 +251,7 @@ namespace RshCSharpWrapper.Device
         }
         public API Init(InitGSPF initStructure, INIT_MODE mode = INIT_MODE.INIT)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             Types.InitGSPF iS = new Types.InitGSPF(0);
@@ -286,6 +287,7 @@ namespace RshCSharpWrapper.Device
         }
         public API Init(InitVoltmeter initStructure, INIT_MODE mode = INIT_MODE.INIT)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             Types.InitVoltmeter iS = new Types.InitVoltmeter(0);
@@ -321,6 +323,7 @@ namespace RshCSharpWrapper.Device
         }
         public API Init(InitPort initStructure, INIT_MODE mode = INIT_MODE.INIT)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             Types.InitPort iS = new Types.InitPort(0);
@@ -352,9 +355,9 @@ namespace RshCSharpWrapper.Device
 
             return st;
         }
-
         public API Init(InitDAC initStructure, INIT_MODE mode = INIT_MODE.INIT)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             Types.InitDAC iS = new Types.InitDAC(0);
@@ -387,6 +390,7 @@ namespace RshCSharpWrapper.Device
 
         public API Start()
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             try
@@ -405,6 +409,7 @@ namespace RshCSharpWrapper.Device
         }
         public API Stop()
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
             try
             {
@@ -423,6 +428,7 @@ namespace RshCSharpWrapper.Device
 
         public API GetData(int[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             API st = API.SUCCESS;
@@ -466,6 +472,7 @@ namespace RshCSharpWrapper.Device
         }
         public API GetData(short[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             API st = API.SUCCESS;
@@ -507,9 +514,9 @@ namespace RshCSharpWrapper.Device
 
             return st;
         }
-
         public API GetData(ushort[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             API st = API.SUCCESS;
@@ -553,9 +560,9 @@ namespace RshCSharpWrapper.Device
 
             return st;
         }
-
         public API GetData(double[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             API st = API.SUCCESS;
@@ -597,9 +604,9 @@ namespace RshCSharpWrapper.Device
 
             return st;
         }
-
         public API SetData(short[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
         {
+            uint operationStatus;
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             API st = API.SUCCESS;
@@ -641,212 +648,162 @@ namespace RshCSharpWrapper.Device
             return st;
         }
 
-        public API Get(GET mode)
+        /// <summary>
+        /// Выборка параметров платы
+        /// </summary>
+        /// <param name="mode">Режим выборки данных</param>
+        /// <param name="value">Если выбран режим выборки с входным параметром, то здесь необходимо его передавать на вход. Структуры из namespace Types</param>
+        /// <returns>Возвращает данные в зависимости от выбранного режима</returns>
+        public dynamic Get(GET mode, ValueType value = null)
         {
-            if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-            API st = API.SUCCESS;
-
-            Types.S32 tmp = new Types.S32(0);
-            tmp.data = 0;
-            try
-            {
-                operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                if (ex.Message.Contains("Unable to load DLL"))
-                    return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-                else
-                    return API.UNDEFINED;
-            }
-            st = (API)(operationStatus & MASK_RSH_ERROR);
-
-            return st;
+            API? result = null;
+            return Get(mode, ref result, value);
         }
 
-        public API Get(GET mode, ref double value)
+        delegate void ErrorHandlingDelegate(uint operationStatus, ref API? result);
+
+        /// <summary>
+        /// Выборка параметров платы
+        /// </summary>
+        /// <param name="mode">Режим выборки данных</param>
+        /// <param name="result">Если нам надо узнать код/результат операции. Вызов с переданным null будет генерировать new RshDeviceException(API) если result!=API.SUCCESS</param>
+        /// <param name="value">Если выбран режим выборки с входным параметром, то здесь необходимо его передавать на вход. Структуры из namespace Types</param>
+        /// <returns>Возвращает данные в зависимости от выбранного режима</returns>
+        public dynamic Get(GET mode, ref API? result, ValueType value = null)
         {
-            if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
+            if (deviceHandle == IntPtr.Zero)
+                throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
+                        
+            //get metadata for selected mode
+            var attr = (CorrespondingTypeAttribute) Attribute.GetCustomAttribute(
+                typeof(GET).GetField(Enum.GetName(typeof(GET), mode)), 
+                typeof(CorrespondingTypeAttribute)
+                );
 
-            API st = API.SUCCESS;
+            bool input = attr.input;
+            Type type = attr.type;
+            if (input && value == null) 
+                throw new ArgumentNullException("value must be provided for " + mode + " mode");
 
-            Types.Double tmp = new Types.Double(0);
-            tmp.data = value;
-            try
+            ErrorHandlingDelegate ErrorHandling = (uint opStatus, ref API? res) =>
             {
-                operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
-            }
-            catch (Exception ex)
+                API st = (API)(opStatus & MASK_RSH_ERROR);
+                if (res.HasValue)
+                    res = st;
+                else if (st != API.SUCCESS)
+                    throw new RshDeviceException(st);
+            };
+
+            dynamic tmp = null;
+
+            if (type == typeof(Types.S8P))
+                tmp = input ? (Types.S8P)value : new Types.S8P(0);
+            if (type == typeof(Types.U16P))
+                tmp = input ? (Types.U16P)value : new Types.U16P(0);
+            if (type == typeof(Types.Double))
+                tmp = input ? (Types.Double)value : new Types.Double(0);
+            if (type == typeof(Types.U32))
+                tmp = input ? (Types.U32)value : new Types.U32(0);
+            if (type == typeof(Types.S32))
+                tmp = input ? (Types.S32)value : new Types.S32(0);
+
+            int size = Marshal.SizeOf(tmp);
+            IntPtr unmanagedAddr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(tmp, unmanagedAddr, true);
+                
+            var operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, unmanagedAddr);
+                
+            tmp = Marshal.PtrToStructure(unmanagedAddr, type);
+            Marshal.FreeHGlobal(unmanagedAddr);
+            unmanagedAddr = IntPtr.Zero;
+
+            ErrorHandling(operationStatus, ref result);
+            
+            if (type == typeof(Types.S8P))
+                return Marshal.PtrToStringAnsi(tmp.data);
+            if (type == typeof(Types.U16P))
+                return Marshal.PtrToStringUni(tmp.data);
+            if (type == typeof(Types.Double))
+                return tmp.data;
+            if (type == typeof(Types.U32))
+                return tmp.data;
+            if (type == typeof(Types.S32))
+                return tmp.data;
+
+            /*if (type == typeof(Types.BufferU32)) //TODO: Понять как работать с буферами
             {
-                Console.WriteLine(ex.Message);
-                if (ex.Message.Contains("Unable to load DLL"))
-                    return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-                else
-                    return API.UNDEFINED;
-            }
-            st = (API)(operationStatus & MASK_RSH_ERROR);
-
-            if (st == API.SUCCESS) value = tmp.data;
-
-            return st;
-        }
-        public API Get(GET mode, ref uint value)
-        {
-            if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-            API st = API.SUCCESS;
-
-            Types.U32 tmp = new Types.U32(0);
-            tmp.data = value;
-            try
-            {
-                operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                if (ex.Message.Contains("Unable to load DLL"))
-                    return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-                else
-                    return API.UNDEFINED;
-            }
-            st = (API)(operationStatus & MASK_RSH_ERROR);
-
-            if (st == API.SUCCESS) value = tmp.data;
-
-            return st;
-        }
-
-        public API Get(GET mode, ref int value)
-        {
-            if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-            API st = API.SUCCESS;
-
-            Types.S32 tmp = new Types.S32(0);
-            tmp.data = value;
-            try
-            {
-                operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                if (ex.Message.Contains("Unable to load DLL"))
-                    return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-                else
-                    return API.UNDEFINED;
-            }
-            st = (API)(operationStatus & MASK_RSH_ERROR);
-
-            if (st == API.SUCCESS) value = tmp.data;
-
-            return st;
-        }
-
-
-        public API Get(GET mode, out string value)
-        {
-            value = "";
-
-            if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-            API st = API.SUCCESS;
-
-            if (mode.ToString().Contains("UTF16"))
-            {
-                Types.U16P tmp = new Types.U16P(0);
-                try
-                {
-                    operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    if (ex.Message.Contains("Unable to load DLL"))
-                        return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-                    else
-                        return API.UNDEFINED;
-                }
-                st = (API)(operationStatus & MASK_RSH_ERROR);
-                if (st == API.SUCCESS) value = System.Runtime.InteropServices.Marshal.PtrToStringUni(tmp.data);
-            }
-            else
-            {
-                Types.S8P tmp = new Types.S8P(0);
-                try
-                {
-                    operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    if (ex.Message.Contains("Unable to load DLL"))
-                        return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-                    else
-                        return API.UNDEFINED;
-                }
-                st = (API)(operationStatus & MASK_RSH_ERROR);
-                if (st == API.SUCCESS) value = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(tmp.data);
-            }
-
-            return st;
+                var tmp = new Types.BufferU32(0);                
+                uint rec = 10;
+                var operationStatus = Connector.UniDriverLVGetArrayUInt(deviceHandle, (uint)mode, 10, ref rec, ref tmp);
+                ErrorHandling(operationStatus, ref result);
+                //var vvv = Marshal.PtrToStructure(tmp.ptr,typeof(test));
+                return tmp;
+            }*/
+            return null;
         }
 
-        public API Get(GET mode, ref BoardPortInfo value)
+        public bool IsCapable(CAPS caps)
         {
-            if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
+            API? result = API.SUCCESS;
+            var tmp = new Types.U32(0) { data = (uint)caps };
+            Get(GET.DEVICE_IS_CAPABLE, ref result, tmp);
+            return result == API.SUCCESS;
+        }       
+       
+        //public API Get(GET mode, ref BoardPortInfo value)
+        //{
+        //    uint operationStatus;
+        //    if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+        //    API st = API.SUCCESS;
 
-            Types.BoardPortInfo tmp = new Types.BoardPortInfo(0);
+        //    Types.BoardPortInfo tmp = new Types.BoardPortInfo(0);
 
-            try
-            {
-                operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                if (ex.Message.Contains("Unable to load DLL"))
-                    return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-                else
-                    return API.UNDEFINED;
-            }
-            st = (API)(operationStatus & MASK_RSH_ERROR);
+        //    try
+        //    {
+        //        operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //        if (ex.Message.Contains("Unable to load DLL"))
+        //            return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
+        //        else
+        //            return API.UNDEFINED;
+        //    }
+        //    st = (API)(operationStatus & MASK_RSH_ERROR);
 
-            if (st == API.SUCCESS)
-            {
-                if (tmp.totalConfs != 0)
-                {
-                    value.confs = new PortInfo[tmp.totalConfs];
-                    for (int i = 0; i < value.confs.Length; i++)
-                    {
-                        value.confs[i] = new PortInfo();
-                        value.confs[i].address = tmp.confs[i].address;
-                        value.confs[i].bitSize = tmp.confs[i].bitSize;
-                        string str = System.Text.Encoding.UTF8.GetString(tmp.confs[i].name);
-                        value.confs[i].name = str.Substring(0, str.IndexOf('\0'));
-                    }
-                }
+        //    if (st == API.SUCCESS)
+        //    {
+        //        if (tmp.totalConfs != 0)
+        //        {
+        //            value.confs = new PortInfo[tmp.totalConfs];
+        //            for (int i = 0; i < value.confs.Length; i++)
+        //            {
+        //                value.confs[i] = new PortInfo();
+        //                value.confs[i].address = tmp.confs[i].address;
+        //                value.confs[i].bitSize = tmp.confs[i].bitSize;
+        //                string str = System.Text.Encoding.UTF8.GetString(tmp.confs[i].name);
+        //                value.confs[i].name = str.Substring(0, str.IndexOf('\0'));
+        //            }
+        //        }
 
-                if (tmp.totalPorts != 0)
-                {
-                    value.ports = new PortInfo[tmp.totalPorts];
-                    for (int i = 0; i < value.ports.Length; i++)
-                    {
-                        value.ports[i] = new PortInfo();
-                        value.ports[i].address = tmp.ports[i].address;
-                        value.ports[i].bitSize = tmp.ports[i].bitSize;
-                        string str = System.Text.Encoding.UTF8.GetString(tmp.ports[i].name);
-                        value.ports[i].name = str.Substring(0, str.IndexOf('\0'));
-                    }
-                }
-            }
-            return st;
-        }
+        //        if (tmp.totalPorts != 0)
+        //        {
+        //            value.ports = new PortInfo[tmp.totalPorts];
+        //            for (int i = 0; i < value.ports.Length; i++)
+        //            {
+        //                value.ports[i] = new PortInfo();
+        //                value.ports[i].address = tmp.ports[i].address;
+        //                value.ports[i].bitSize = tmp.ports[i].bitSize;
+        //                string str = System.Text.Encoding.UTF8.GetString(tmp.ports[i].name);
+        //                value.ports[i].name = str.Substring(0, str.IndexOf('\0'));
+        //            }
+        //        }
+        //    }
+        //    return st;
+        //}
+        
         public static API RshGetErrorDescription(API errorCode, out string value, LANGUAGE language)
         {
             value = "";
@@ -872,7 +829,7 @@ namespace RshCSharpWrapper.Device
 
             return st;
         }
-
+        
         public static API RshGetRegisteredDeviceName(uint index, out string value)
         {
             value = "";
@@ -898,12 +855,13 @@ namespace RshCSharpWrapper.Device
 
             return st;
         }
+        
         /*
-        public static RSH_API RshGetRegisteredDeviceName(uint index, out string[] value)
+        public static API RshGetRegisteredDeviceName(uint index, out string[] value)
         {
                 
             uint os;
-            RSH_API st = RSH_API.SUCCESS;
+            API st = API.SUCCESS;
 
             uint ind = 0;
             while (true)
@@ -912,7 +870,7 @@ namespace RshCSharpWrapper.Device
                 string value;
 
                 st = Device.RshGetRegisteredDeviceName(ind++, out value);
-                if (st != RSH_API.SUCCESS) break;
+                if (st != API.SUCCESS) break;
 
                 Console.WriteLine(value);
             }

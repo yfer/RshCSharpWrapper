@@ -33,9 +33,7 @@ namespace RshCSharpWrapper.Device
             */
             //===================== ПРОВЕРКА СОВМЕСТИМОСТИ =================================  
 
-            uint caps = (uint)CAPS.SOFT_GATHERING_IS_AVAILABLE;
-            st = device.Get(GET.DEVICE_IS_CAPABLE, ref caps); // Проверим, поддерживает ли плата функцию сбора данных сигнала.
-            if (st != API.SUCCESS) return st;//return SayGoodBye(st);
+            if (!device.IsCapable(CAPS.SOFT_GATHERING_IS_AVAILABLE)) throw new Exception("No Soft gathering is available"); //return SayGoodBye(st);
 
             //========================== ИНИЦИАЛИЗАЦИЯ =====================================        
 
@@ -55,10 +53,8 @@ namespace RshCSharpWrapper.Device
         public API Init(int chanNumber, double frequency, int bufferSize)
         {
             API st;
-
-            uint caps = (uint)CAPS.SOFT_INIT_DMA;
-            st = device.Get(GET.DEVICE_IS_CAPABLE, ref caps); // Проверим, поддерживается ли структура DMA.
-            if (st == API.SUCCESS)
+            
+            if (device.IsCapable(CAPS.SOFT_INIT_DMA))
             {
                 InitDMA p = new InitDMA(); // Структура для инициализации параметров работы платы.  
                 p.startType = (uint)InitDMA.StartTypeBit.Program; // Запуск платы по внутреннему таймеру. 
@@ -77,9 +73,8 @@ namespace RshCSharpWrapper.Device
             }
 
 
-            caps = (uint)CAPS.SOFT_INIT_MEMORY;
-            st = device.Get(GET.DEVICE_IS_CAPABLE, ref caps); // Проверим, поддерживается ли структура DMA.
-            if (st == API.SUCCESS)
+            // Проверим, поддерживается ли структура DMA.
+            if (device.IsCapable(CAPS.SOFT_INIT_MEMORY))
             {
                 InitMemory p = new InitMemory(); // Структура для инициализации параметров работы платы.  
                 p.startType = (uint)InitMemory.StartTypeBit.Program; // Запуск платы по внутреннему таймеру. 
@@ -109,13 +104,13 @@ namespace RshCSharpWrapper.Device
             //Console.WriteLine("\n--> Collecting buffer...\n", BOARD_NAME);
             uint waitTime = 100000; // Время ожидания(в миллисекундах) до наступления прерывания. Прерывание произойдет при полном заполнении буфера. 
 
-            if ((st = device.Get(GET.WAIT_BUFFER_READY_EVENT, ref waitTime)) == API.SUCCESS)	// Ожидаем готовность буфера.
+            /*if ((st = device.Get(GET.WAIT_BUFFER_READY_EVENT, ref waitTime)) == API.SUCCESS)	// Ожидаем готовность буфера.
             {
                 Console.WriteLine("\nInterrupt has taken place!\nWhich means that onboard buffer had filled completely.");
 
                 device.Stop();
             }
-
+            */
             st = device.GetData(buffer);
             return st;
         }
@@ -129,12 +124,12 @@ namespace RshCSharpWrapper.Device
             //Console.WriteLine("\n--> Collecting buffer...\n", BOARD_NAME);
             uint waitTime = 100000; // Время ожидания(в миллисекундах) до наступления прерывания. Прерывание произойдет при полном заполнении буфера. 
 
-            if ((st = device.Get(GET.WAIT_BUFFER_READY_EVENT, ref waitTime)) == API.SUCCESS)	// Ожидаем готовность буфера.
+            /*if ((st = device.Get(GET.WAIT_BUFFER_READY_EVENT, ref waitTime)) == API.SUCCESS)	// Ожидаем готовность буфера.
             {
                 Console.WriteLine("\nInterrupt has taken place!\nWhich means that onboard buffer had filled completely.");
 
                 device.Stop();
-            }
+            }*/
 
             st = device.GetData(buffer);
             return st;

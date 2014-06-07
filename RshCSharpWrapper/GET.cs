@@ -15,34 +15,34 @@ namespace RshCSharpWrapper
         /// <summary>
         /// Проверка готовности данных в случае одиночного преобразования.
         /// Тип данных: [out] ::RSH_U32
-        /// Полученные данные: 1 - было получено прерывание по готовности данных, 0 - прерывание не было получено. Если перед вызовом метода IRshDevice::Get() с данным кодом был запущен сбор данных, можно узнать, готова ли уже очередная порция данных.
+        /// Полученные данные: 1 - было получено прерывание по готовности данных, 0 - прерывание не было получено. Если перед вызовом метода Device.Get() с данным кодом был запущен сбор данных, можно узнать, готова ли уже очередная порция данных.
         /// Прим.
-        /// Данный код проверяет текущее (на момент вызова метода IRshDevice::Get()) состояние события, если нужно организовать цикл ожидания готовности данных, лучше воспользоваться кодом RSH_GET_WAIT_BUFFER_READY_EVENT.
+        /// Данный код проверяет текущее (на момент вызова метода Device.Get()) состояние события, если нужно организовать цикл ожидания готовности данных, лучше воспользоваться кодом RSH_GET_WAIT_BUFFER_READY_EVENT.
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), name = Types.Names.U32)]
         BUFFER_READY = 0x10001,
         
         /// <summary>
         /// Ожидание завершения процесса сбора и передачи данных.
         /// Тип данных: [in] ::RSH_U32
-        /// После запуска процесса сбора данных, можно вызвать метод IRshDevice::Get() с этим параметром и ожидать события готовности данных. Второй параметр в методе IRshDevice::Get() задает максимальное время ожидания (таймаут) в мс. Можно использовать константу RSH_INFINITE_WAIT_TIME для бесконечного ожидания.
+        /// После запуска процесса сбора данных, можно вызвать метод Device.Get() с этим параметром и ожидать события готовности данных. Второй параметр в методе Device.Get() задает максимальное время ожидания (таймаут) в мс. Можно использовать константу RSH_INFINITE_WAIT_TIME для бесконечного ожидания.
         /// Прим.
         /// По сути, данный метод аналогичен вызову функции WaitForSingleObject из WinAPI, но его реализация кроссплатформенная.
         /// Предупреждения
         /// Вызов данного метода блокирует вызывающий поток до тех пор, пока не будет получено событие готовности данных, или таймаут! Если используется константа RSH_INFINITE_WAIT_TIME, единственный способ отменить ожидание и разблокировать поток - это вызов метода IRshDevice::Stop().
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), input = true)]
         WAIT_BUFFER_READY_EVENT = 0x20001,
 
         /// <summary>
         /// Ожидание завершения процесса непрервыного сбора данных.
         /// Тип данных: [in] ::RSH_U32
         /// После вызова метода IRshDevice::Stop() при работе в непрерывном режиме может пройти какое-то время до того момента, когда сбор будет фактически остановлен. Используя данную константу можно быть уверенным в том, что процесс сбора данных полностью остановлен, прежде чем выполнять какие-либо другие действия.
-        /// Второй параметр в методе IRshDevice::Get() задает максимальное время ожидания (таймаут) в мс.Можно использовать константу RSH_INFINITE_WAIT_TIME для бесконечного ожидания.
+        /// Второй параметр в методе Device.Get() задает максимальное время ожидания (таймаут) в мс.Можно использовать константу RSH_INFINITE_WAIT_TIME для бесконечного ожидания.
         /// Прим.
         /// В большинстве случаев можно обойтись без вызова данного метода, но он может быть очень полезен для синхронизации потоков в сложных приложениях.
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), input = true)]
         WAIT_GATHERING_COMPLETE = 0x20002,
         
         WAIT_NANO_DELAY = 0x20003,
@@ -51,7 +51,7 @@ namespace RshCSharpWrapper
         /// Получение идентификационного кода устройства.
         /// Тип данных: [out] ::RSH_U32
         /// Каждое устройство расширения, подключаемое к компьютеру, имеет уникальный (для данной модели устройства) код устройства (product ID или PID) и код производителя (vendor ID или VID). Операционная система использует данные коды для идентифиакции устройства и выбора драйвера для него.
-        /// Используя метод IRshDevice::Get() с данной константой, можно получить код оборудования для устройства.
+        /// Используя метод Device.Get() с данной константой, можно получить код оборудования для устройства.
         /// </summary>
         [CorrespondingType(typeof(Types.U32))]
         DEVICE_PID = 0x30001,
@@ -60,7 +60,7 @@ namespace RshCSharpWrapper
         /// Получение идентификационного кода производителя устройства.
         /// Тип данных: [out] ::RSH_U32
         /// Каждое устройство расширения, подключаемое к компьютеру, имеет уникальный (для данной модели устройства) код устройства (product ID или PID) и код производителя (vendor ID или VID). Операционная система использует данные коды для идентифиакции устройства и выбора драйвера для него.
-        /// Используя метод IRshDevice::Get() с данной константой, можно получить код производителя устройства.
+        /// Используя метод Device.Get() с данной константой, можно получить код производителя устройства.
         /// </summary>
         [CorrespondingType(typeof(Types.U32))]
         DEVICE_VID = 0x30002,
@@ -82,13 +82,15 @@ namespace RshCSharpWrapper
         DEVICE_NAME_VERBOSE_UTF16 = 0x30004,
         
         /// <summary>
+        /// Вместо этого свойства используйте Device.IsCapable()
+        /// 
         /// Определение возможностей устройства и библиотеки.
         /// Тип данных: [in] ::RSH_U32
-        /// Используя данную константу, можно проверить, поддерживает ли устройство и библиотека различные аппаратные и программные режимы работы и возможности. Код свойства, поддержку которого нужно проверить, должен передаваться в качестве второго параметра метода IRshDevice::Get().
+        /// Используя данную константу, можно проверить, поддерживает ли устройство и библиотека различные аппаратные и программные режимы работы и возможности. Код свойства, поддержку которого нужно проверить, должен передаваться в качестве второго параметра метода Device.Get().
         /// Прим.
         /// Полный список свойств можно посмотреть здесь.
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), name = Types.Names.U32, input = true)]
         DEVICE_IS_CAPABLE = 0x30005,
         
         /// <summary>
@@ -337,7 +339,7 @@ namespace RshCSharpWrapper
         /// Необходимо сделать:
         /// Возможно, требуется доработка (данная опция только у Леонардо 2)
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), input = true)]
         DEVICE_ICP_POWER_SET = 0x30027,
         
         /// <summary>
@@ -778,7 +780,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ ESTIMATE_FORWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), input = true)]
         DPA_FFT_NEW_FFT_PLAN_ESTIMATE_FORWARD_SET = 0xb0001,
         
         /// <summary>
@@ -786,7 +788,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ ESTIMATE_BACKWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), input = true)]
         DPA_FFT_NEW_FFT_PLAN_ESTIMATE_BACKWARD_SET = 0xb0002,
         
         /// <summary>
@@ -794,7 +796,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ MEASURE_FORWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), input = true)]
         DPA_FFT_NEW_FFT_PLAN_MEASURE_FORWARD_SET = 0xb0003,
         
         /// <summary>
@@ -802,7 +804,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ MEASURE_BACKWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), input = true)]
         DPA_FFT_NEW_FFT_PLAN_MEASURE_BACKWARD_SET = 0xb0004,
         
         /// <summary>
@@ -810,7 +812,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ PATIENT_FORWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), input = true)]
         DPA_FFT_NEW_FFT_PLAN_PATIENT_FORWARD_SET = 0xb0005,
         
         /// <summary>
@@ -818,7 +820,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ PATIENT_BACKWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [CorrespondingType(typeof(Types.U32))]
+        [CorrespondingType(typeof(Types.U32), input = true)]
         DPA_FFT_NEW_FFT_PLAN_PATIENT_BACKWARD_SET = 0xb0006,
         
         LIBRARY_FREE_RESOURCES = 0x10050001,
@@ -841,10 +843,11 @@ namespace RshCSharpWrapper
     }
 
     [System.AttributeUsage(System.AttributeTargets.All)]
-    internal class CorrespondingTypeAttribute : System.Attribute
+    public class CorrespondingTypeAttribute : System.Attribute
     {        
-        public readonly Type type;
-
+        public Type type;
+        public Types.Names name;
+        public bool input = false;
         public CorrespondingTypeAttribute(Type type)
         {
             this.type = type;
