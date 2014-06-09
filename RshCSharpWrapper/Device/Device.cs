@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RshCSharpWrapper.Types;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -653,8 +654,8 @@ namespace RshCSharpWrapper.Device
         /// </summary>
         /// <param name="mode">Режим выборки данных</param>
         /// <param name="value">Если выбран режим выборки с входным параметром, то здесь необходимо его передавать на вход. Структуры из namespace Types</param>
-        /// <returns>Возвращает данные в зависимости от выбранного режима</returns>
-        public dynamic Get(GET mode, ValueType value = null)
+        /// <returns>Возвращает данные в зависимости от выбранного режима, Если внутри какая-нибудь из процедур вернула не SUCCESS то будет выброшен RshDeviceException(API)</returns>
+        public dynamic Get(GET mode, object value = null)
         {
             API? result = null;
             return Get(mode, ref result, value);
@@ -669,66 +670,58 @@ namespace RshCSharpWrapper.Device
         /// <param name="result">Если нам надо узнать код/результат операции. Вызов с переданным null будет генерировать new RshDeviceException(API) если result!=API.SUCCESS</param>
         /// <param name="value">Если выбран режим выборки с входным параметром, то здесь необходимо его передавать на вход. Структуры из namespace Types</param>
         /// <returns>Возвращает данные в зависимости от выбранного режима</returns>
-        public dynamic Get(GET mode, ref API? result, ValueType value = null)
+        public dynamic Get(GET mode, ref API? result, object value = null)
         {
             if (deviceHandle == IntPtr.Zero)
                 throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
-                        
-            //get metadata for selected mode
-            var attr = (CorrespondingTypeAttribute) Attribute.GetCustomAttribute(
-                typeof(GET).GetField(Enum.GetName(typeof(GET), mode)), 
+
+            //Выясняем параметры работы выбранного режима
+            var mode_attr = (ModeAttribute)Attribute.GetCustomAttribute(
+                typeof(GET).GetField(Enum.GetName(typeof(GET), mode)),
+                typeof(ModeAttribute)
+                );
+            var name_attr = (CorrespondingTypeAttribute)Attribute.GetCustomAttribute(
+                typeof(Names).GetField(Enum.GetName(typeof(Names), mode_attr.Name)),
                 typeof(CorrespondingTypeAttribute)
                 );
 
-            bool input = attr.input;
-            Type type = attr.type;
-            if (input && value == null) 
+            if (mode_attr.Input && value == null)
                 throw new ArgumentNullException("value must be provided for " + mode + " mode");
-
-            ErrorHandlingDelegate ErrorHandling = (uint opStatus, ref API? res) =>
-            {
-                API st = (API)(opStatus & MASK_RSH_ERROR);
-                if (res.HasValue)
-                    res = st;
-                else if (st != API.SUCCESS)
-                    throw new RshDeviceException(st);
-            };
-
-            dynamic tmp = null;
-
-            if (type == typeof(Types.S8P))
-                tmp = input ? (Types.S8P)value : new Types.S8P(0);
-            if (type == typeof(Types.U16P))
-                tmp = input ? (Types.U16P)value : new Types.U16P(0);
-            if (type == typeof(Types.Double))
-                tmp = input ? (Types.Double)value : new Types.Double(0);
-            if (type == typeof(Types.U32))
-                tmp = input ? (Types.U32)value : new Types.U32(0);
-            if (type == typeof(Types.S32))
-                tmp = input ? (Types.S32)value : new Types.S32(0);
-
-            int size = Marshal.SizeOf(tmp);
-            IntPtr unmanagedAddr = Marshal.AllocHGlobal(size);
+            
+            //Переменная для передачи в RshUniDriver
+            dynamic tmp = mode_attr.Input ? value : name_attr.Type.GetConstructor(new Type[] { }).Invoke(new object[] { });
+            
+            //Обращение к RshUniDriver и возвращение результата из неуправляемой памят
+            IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
             Marshal.StructureToPtr(tmp, unmanagedAddr, true);
-                
             var operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, unmanagedAddr);
-                
-            tmp = Marshal.PtrToStructure(unmanagedAddr, type);
+            tmp = Marshal.PtrToStructure(unmanagedAddr, name_attr.Type);
             Marshal.FreeHGlobal(unmanagedAddr);
             unmanagedAddr = IntPtr.Zero;
 
-            ErrorHandling(operationStatus, ref result);
-            
-            if (type == typeof(Types.S8P))
-                return Marshal.PtrToStringAnsi(tmp.data);
-            if (type == typeof(Types.U16P))
-                return Marshal.PtrToStringUni(tmp.data);
-            if (type == typeof(Types.Double))
-                return tmp.data;
-            if (type == typeof(Types.U32))
-                return tmp.data;
-            if (type == typeof(Types.S32))
-                return tmp.data;
+            //Проверяем на ошибки вернувшийся результат,и если вызывающего не интересует result, а ошибка есть, бросаем исключение
+            API st = (API)(operationStatus & MASK_RSH_ERROR);
+            if (result.HasValue)
+                result = st;
+            else if (st != API.SUCCESS)
+                throw new RshDeviceException(st);
+
+            //Что возвращаем?
+            switch (mode_attr.Name)
+            {
+                case Types.Names.S8P:
+                    return Marshal.PtrToStringAnsi(tmp.data);
+                case Types.Names.U16P:
+                    return Marshal.PtrToStringUni(tmp.data);
+                case Types.Names.Double:
+                case Types.Names.U32:
+                case Types.Names.S32:
+                    return tmp.data;
+
+                default:
+                    return null;
+            }
+
 
             /*if (type == typeof(Types.BufferU32)) //TODO: Понять как работать с буферами
             {
@@ -739,16 +732,20 @@ namespace RshCSharpWrapper.Device
                 //var vvv = Marshal.PtrToStructure(tmp.ptr,typeof(test));
                 return tmp;
             }*/
-            return null;
         }
 
+        /// <summary>
+        /// Выяснить возможности платы
+        /// </summary>
+        /// <param name="caps">Какая возможность интересует</param>
+        /// <returns>Поддерживается ли возможность</returns>
         public bool IsCapable(CAPS caps)
         {
             API? result = API.SUCCESS;
-            var tmp = new Types.U32(0) { data = (uint)caps };
+            var tmp = new Types.U32() { data = (uint)caps };
             Get(GET.DEVICE_IS_CAPABLE, ref result, tmp);
             return result == API.SUCCESS;
-        }       
+        }
        
         //public API Get(GET mode, ref BoardPortInfo value)
         //{
@@ -810,7 +807,7 @@ namespace RshCSharpWrapper.Device
             uint os;
             API st = API.SUCCESS;
 
-            Types.U16P tmp = new Types.U16P(0);
+            Types.U16P tmp = new Types.U16P();
             try
             {
                 os = Connector.UniDriverGetError((uint)errorCode, ref tmp, (uint)language);
@@ -836,7 +833,7 @@ namespace RshCSharpWrapper.Device
             uint os;
             API st = API.SUCCESS;
 
-            Types.U16P tmp = new Types.U16P(0);
+            Types.U16P tmp = new Types.U16P();
             try
             {
                 os = Connector.UniDriverGetRegisteredDeviceName(index, ref tmp);

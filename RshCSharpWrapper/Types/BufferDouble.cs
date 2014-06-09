@@ -17,7 +17,7 @@ namespace RshCSharpWrapper.Types
 
         public BufferDouble(uint size)
         {
-            typeName = Names.BufferTypeDouble;
+            typeName = Names.BufferDouble;
             this.size = size;
             this.psize = 0;
             this.ptr = IntPtr.Zero;

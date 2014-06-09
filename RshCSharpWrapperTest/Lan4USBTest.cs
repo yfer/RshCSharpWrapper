@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RshCSharpWrapper.Device;
 using RshCSharpWrapper;
 using System.Reflection;
+using RshCSharpWrapper.Types;
 
 namespace RshCSharpWrapperTest
 {
@@ -20,27 +21,14 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetTextParameters()
         {
-            using(var device = new Device(BOARD_NAME))
+            using (var device = new Device(BOARD_NAME))
             {
                 string res = "";
-                foreach (var mode in Enum.GetNames(typeof(GET)))
+                foreach(var v in GETHelper.GetModes( x => x.Name == Names.S8P || x.Name == Names.U16P ) )
                 {
-                    MemberInfo mi = typeof(GET).GetField( mode );
-                    CorrespondingTypeAttribute attr = (CorrespondingTypeAttribute)Attribute.GetCustomAttribute(mi, typeof(CorrespondingTypeAttribute));
-                    if (attr != null)
-                    {
-                        Type datatype = attr.type;
-                        try
-                        {
-                            if (datatype == typeof(RshCSharpWrapper.Types.S8P) || datatype == typeof(RshCSharpWrapper.Types.U16P))
-                                res += mode + ":" + device.Get((GET)Enum.Parse(typeof(GET), mode)) + "\n";
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-                }
+                    API? api = API.SUCCESS;
+                    res += v + ":" + device.Get(v, ref api) + "   API:" + api + "\n";
+                }                
                 // Смотрите переменную res, в ней содержится список текстовых данных отданных платой.
             }
         }
@@ -51,9 +39,7 @@ namespace RshCSharpWrapperTest
             {
                 string res = "";
                 foreach (var cap in Enum.GetNames(typeof(CAPS)))
-                {
                     res += cap + ":" + device.IsCapable((CAPS)Enum.Parse(typeof(CAPS), cap)) + "\n";
-                }
                 //Смотрите переменную res, в ней содержится список всего того что может ваша плата.
             }
         }
@@ -66,16 +52,16 @@ namespace RshCSharpWrapperTest
                 device.Connect(1);
                 
                 //Структура для инициализации параметров работы устройства.  
-                InitMemory p = new InitMemory();
+                var p = new RshCSharpWrapper.Device.InitMemory();
                 //Запуск сбора данных программный. 
-                p.startType = (uint)InitMemory.StartTypeBit.Program;
+                p.startType = (uint)RshCSharpWrapper.Device.InitMemory.StartTypeBit.Program;
                 //Размер внутреннего блока данных, по готовности которого произойдёт прерывание.
                 p.bufferSize = BSIZE;
                 //Частота дискретизации.
                 p.frequency = SAMPLE_FREQ;
 
                 //Сделаем 0-ой канал активным.
-                p.channels[0].control = (uint)Channel.ControlBit.Used;
+                p.channels[0].control = (uint)RshCSharpWrapper.Device.Channel.ControlBit.Used;
                 //Зададим коэффициент усиления для 0-го канала.
                 p.channels[0].gain = 1;
 
@@ -89,7 +75,7 @@ namespace RshCSharpWrapperTest
                     serNum = device.Get(GET.DEVICE_SERIAL_NUMBER);                
 
                 // Время ожидания(в миллисекундах) до наступления прерывания. Прерывание произойдет при полном заполнении буфера. 
-                RshCSharpWrapper.Types.U32 waitTime = new RshCSharpWrapper.Types.U32(0) { data = 100000 };
+                RshCSharpWrapper.Types.U32 waitTime = new RshCSharpWrapper.Types.U32() { data = 100000 };
                 
                 device.Start(); // Запускаем плату на сбор буфера.
 

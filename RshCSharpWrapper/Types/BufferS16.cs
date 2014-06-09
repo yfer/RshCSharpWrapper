@@ -17,7 +17,7 @@ namespace RshCSharpWrapper.Types
 
         public BufferS16(uint size)
         {
-            typeName = Names.BufferTypeS16;
+            typeName = Names.BufferS16;
             this.size = size;
             this.psize = 0;
             this.ptr = IntPtr.Zero;

@@ -17,7 +17,7 @@ namespace RshCSharpWrapper.Types
 
         public BufferS32(uint size)
         {
-            typeName = Names.BufferTypeS32;
+            typeName = Names.BufferS32;
             this.size = size;
             this.psize = 0;
             this.ptr = IntPtr.Zero;

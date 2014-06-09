@@ -17,7 +17,7 @@ namespace RshCSharpWrapper.Types
 
         public BufferU8(uint size)
         {
-            typeName = Names.BufferTypeU8;
+            typeName = Names.BufferU8;
             this.size = size;
             this.psize = 0;
             this.ptr = IntPtr.Zero;
