@@ -715,7 +715,33 @@ namespace RshCSharpWrapper.Device
                 case Types.Names.U32:
                 case Types.Names.S32:
                     return tmp.data;
+                case Types.Names.BoardPortInfo:
+                    if (tmp.totalConfs != 0)
+                    {
+                        tmp.confs = new PortInfo[tmp.totalConfs];
+                        for (int i = 0; i < tmp.confs.Length; i++)
+                        {
+                            tmp.confs[i] = new PortInfo();
+                            tmp.confs[i].address = tmp.confs[i].address;
+                            tmp.confs[i].bitSize = tmp.confs[i].bitSize;
+                            string str = System.Text.Encoding.UTF8.GetString(tmp.confs[i].name);
+                            tmp.confs[i].name = str.Substring(0, str.IndexOf('\0'));
+                        }
+                    }
 
+                    if (tmp.totalPorts != 0)
+                    {
+                        tmp.ports = new PortInfo[tmp.totalPorts];
+                        for (int i = 0; i < tmp.ports.Length; i++)
+                        {
+                            tmp.ports[i] = new PortInfo();
+                            tmp.ports[i].address = tmp.ports[i].address;
+                            tmp.ports[i].bitSize = tmp.ports[i].bitSize;
+                            string str = System.Text.Encoding.UTF8.GetString(tmp.ports[i].name);
+                            tmp.ports[i].name = str.Substring(0, str.IndexOf('\0'));
+                        }
+                    }
+                    return tmp;
                 default:
                     return null;
             }
@@ -743,61 +769,7 @@ namespace RshCSharpWrapper.Device
             var tmp = new Types.U32() { data = (uint)caps };
             Get(GET.DEVICE_IS_CAPABLE, ref result, tmp);
             return result == API.SUCCESS;
-        }
-       
-        //public API Get(GET mode, ref BoardPortInfo value)
-        //{
-        //    uint operationStatus;
-        //    if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-        //    API st = API.SUCCESS;
-
-        //    Types.BoardPortInfo tmp = new Types.BoardPortInfo(0);
-
-        //    try
-        //    {
-        //        operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        if (ex.Message.Contains("Unable to load DLL"))
-        //            return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //        else
-        //            return API.UNDEFINED;
-        //    }
-        //    st = (API)(operationStatus & MASK_RSH_ERROR);
-
-        //    if (st == API.SUCCESS)
-        //    {
-        //        if (tmp.totalConfs != 0)
-        //        {
-        //            value.confs = new PortInfo[tmp.totalConfs];
-        //            for (int i = 0; i < value.confs.Length; i++)
-        //            {
-        //                value.confs[i] = new PortInfo();
-        //                value.confs[i].address = tmp.confs[i].address;
-        //                value.confs[i].bitSize = tmp.confs[i].bitSize;
-        //                string str = System.Text.Encoding.UTF8.GetString(tmp.confs[i].name);
-        //                value.confs[i].name = str.Substring(0, str.IndexOf('\0'));
-        //            }
-        //        }
-
-        //        if (tmp.totalPorts != 0)
-        //        {
-        //            value.ports = new PortInfo[tmp.totalPorts];
-        //            for (int i = 0; i < value.ports.Length; i++)
-        //            {
-        //                value.ports[i] = new PortInfo();
-        //                value.ports[i].address = tmp.ports[i].address;
-        //                value.ports[i].bitSize = tmp.ports[i].bitSize;
-        //                string str = System.Text.Encoding.UTF8.GetString(tmp.ports[i].name);
-        //                value.ports[i].name = str.Substring(0, str.IndexOf('\0'));
-        //            }
-        //        }
-        //    }
-        //    return st;
-        //}
+        }       
         
         public static API RshGetErrorDescription(API errorCode, out string value, LANGUAGE language)
         {
