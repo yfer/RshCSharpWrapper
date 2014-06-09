@@ -660,9 +660,7 @@ namespace RshCSharpWrapper.Device
             API? result = null;
             return Get(mode, ref result, value);
         }
-
-        delegate void ErrorHandlingDelegate(uint operationStatus, ref API? result);
-
+        
         /// <summary>
         /// Выборка параметров платы
         /// </summary>
