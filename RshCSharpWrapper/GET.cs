@@ -851,8 +851,8 @@ namespace RshCSharpWrapper
         {
             foreach (var mode in Enum.GetValues(typeof(GET)))
             {
-                var mi = typeof(GET).GetField( mode.ToString() );
-                var attr = (ModeAttribute)Attribute.GetCustomAttribute(mi, typeof(ModeAttribute));
+                var fi = typeof(GET).GetField( mode.ToString() );
+                var attr = (ModeAttribute)Attribute.GetCustomAttribute(fi, typeof(ModeAttribute));
                 if (attr != null && Selector(attr))
                     yield return (GET)mode;
             }
