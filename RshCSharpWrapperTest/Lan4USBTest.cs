@@ -63,7 +63,12 @@ namespace RshCSharpWrapperTest
                 //Сделаем 0-ой канал активным.
                 p.channels[0].control = (uint)RshCSharpWrapper.Device.Channel.ControlBit.Used;
                 //Зададим коэффициент усиления для 0-го канала.
-                p.channels[0].gain = 1;
+                p.channels[0].gain = 10;
+
+                //Сделаем 0-ой канал активным.
+                p.channels[1].control = (uint)RshCSharpWrapper.Device.Channel.ControlBit.Used;
+                //Зададим коэффициент усиления для 0-го канала.
+                p.channels[1].gain = 10;
 
                 //Инициализация устройства (передача выбранных параметров сбора данных)
                 //После инициализации неправильные значения в структуре будут откорректированы.
@@ -71,7 +76,7 @@ namespace RshCSharpWrapperTest
 
                 //=================== ИНФОРМАЦИЯ О ПРЕДСТОЯЩЕМ СБОРЕ ДАННЫХ ====================== 
                 uint 
-                    activeChanNumber = device.Get(GET.DEVICE_ACTIVE_CHANNELS_NUMBER),
+                    activeChannelsCount = device.Get(GET.DEVICE_ACTIVE_CHANNELS_NUMBER),
                     serNum = device.Get(GET.DEVICE_SERIAL_NUMBER);                
 
                 // Время ожидания(в миллисекундах) до наступления прерывания. Прерывание произойдет при полном заполнении буфера. 
@@ -84,9 +89,11 @@ namespace RshCSharpWrapperTest
                     device.Stop();
 
                     //Буфер с данными в мзр.
-                    short[] userBuffer = new short[p.bufferSize * activeChanNumber];
+                    short[] userBuffer = new short[p.bufferSize * activeChannelsCount];
                     //Буфер с данными в вольтах.
-                    double[] userBufferD = new double[p.bufferSize * activeChanNumber];
+                    double[] userBufferD = new double[p.bufferSize * activeChannelsCount];
+
+                    byte[] userBufferB = new byte[p.bufferSize * activeChannelsCount];
 
                     //Получаем буфер с данными.
                     device.GetData(userBuffer);
@@ -94,6 +101,10 @@ namespace RshCSharpWrapperTest
                     //Получаем буфер с данными. В этом буфере будут те же самые данные, но преобразованные в вольты.
                     device.GetData(userBufferD);
 
+                    device.GetData(userBufferB);
+
+                    sbyte[] userBufferSB = new sbyte[userBufferB.Length];
+                    Buffer.BlockCopy(userBufferB, 0, userBufferSB, 0, userBufferB.Length);
                     // Выведем в консоль данные в вольтах. (первые 10 измерений)
                     for (int i = 0; i < 10; i++)
                         Console.WriteLine(userBufferD[i].ToString());
