@@ -743,10 +743,18 @@ namespace RshCSharpWrapper.Device
 
             //Проверяем на ошибки вернувшийся результат,и если вызывающего не интересует result, а ошибка есть, бросаем исключение
             API st = (API)(operationStatus & MASK_RSH_ERROR);
+            if (st != API.SUCCESS)
+            {
+                if (result.HasValue)
+                {
+                    result = st;
+                    return null;
+                }
+                else
+                    throw new RshDeviceException(st);
+            }
             if (result.HasValue)
                 result = st;
-            else if (st != API.SUCCESS)
-                throw new RshDeviceException(st);
 
             return tmp.ReturnValue();
             //Что возвращаем?
