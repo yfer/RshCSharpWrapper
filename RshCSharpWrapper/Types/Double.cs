@@ -7,14 +7,13 @@ using System.Text;
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal struct Double
+    internal class Double
     {
-        private Names type; // data code
+        private Names type = Names.Double; // data code
         public System.Double data;
-        public Double(System.Double data)
+        public dynamic ret()
         {
-            type = Names.Double;
-            this.data = data;
+            return data;
         }
     };
 }

@@ -17,4 +17,6 @@ namespace RshCSharpWrapper.Types
             this.data = data;
         }
     };
+
+
 }

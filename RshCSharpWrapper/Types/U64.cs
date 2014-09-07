@@ -7,14 +7,13 @@ using System.Text;
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal struct U64
+    internal class U64 : IReturn
     {
-        private Names type; // data code
+        private Names type = Names.U64;
         public UInt64 data;
-        public U64(UInt64 data)
+        public dynamic ReturnValue()
         {
-            type = Names.U64;
-            this.data = data;
+            return data;
         }
     };
 }

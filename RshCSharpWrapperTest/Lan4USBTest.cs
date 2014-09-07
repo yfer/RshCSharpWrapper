@@ -24,7 +24,7 @@ namespace RshCSharpWrapperTest
             using (var device = new Device(BOARD_NAME))
             {
                 string res = "";
-                foreach(var v in GETHelper.GetModes( x => x.Name == Names.S8P || x.Name == Names.U16P ) )
+                foreach(var v in GETHelper.GetModes( x => x.Type == typeof(S8P) || x.Type == typeof(U16P) ) )
                 {
                     API? api = API.SUCCESS;
                     res += v + ":" + device.Get(v, ref api) + "   API:" + api + "\n";

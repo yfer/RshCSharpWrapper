@@ -7,9 +7,13 @@ using System.Text;
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public class U32
+    public class U32 : IReturn
     {
-        private Names type = Names.U32; // data code
+        private Names type = Names.U32;
         public UInt32 data;
+        public dynamic ReturnValue()
+        {
+            return data;
+        }
     };
 }

@@ -726,22 +726,18 @@ namespace RshCSharpWrapper.Device
                 typeof(GET).GetField(Enum.GetName(typeof(GET), mode)),
                 typeof(ModeAttribute)
                 );
-            var name_attr = (CorrespondingTypeAttribute)Attribute.GetCustomAttribute(
-                typeof(Names).GetField(Enum.GetName(typeof(Names), mode_attr.Name)),
-                typeof(CorrespondingTypeAttribute)
-                );
 
             if (mode_attr.Input && value == null)
                 throw new ArgumentNullException("value must be provided for " + mode + " mode");
             
             //Переменная для передачи в RshUniDriver
-            dynamic tmp = mode_attr.Input ? value : name_attr.Type.GetConstructor(new Type[] { }).Invoke(new object[] { });
+            dynamic tmp = mode_attr.Input ? value : mode_attr.Type.GetConstructor(new Type[] { }).Invoke(new object[] { });
             
             //Обращение к RshUniDriver и возвращение результата из неуправляемой памят
             IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
             Marshal.StructureToPtr(tmp, unmanagedAddr, true);
             var operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, unmanagedAddr);
-            tmp = Marshal.PtrToStructure(unmanagedAddr, name_attr.Type);
+            tmp = Marshal.PtrToStructure(unmanagedAddr, mode_attr.Type);
             Marshal.FreeHGlobal(unmanagedAddr);
             unmanagedAddr = IntPtr.Zero;
 
@@ -752,47 +748,40 @@ namespace RshCSharpWrapper.Device
             else if (st != API.SUCCESS)
                 throw new RshDeviceException(st);
 
+            return tmp.ReturnValue();
             //Что возвращаем?
-            switch (mode_attr.Name)
-            {
-                case Types.Names.S8P:
-                    return Marshal.PtrToStringAnsi(tmp.data);
-                case Types.Names.U16P:
-                    return Marshal.PtrToStringUni(tmp.data);
-                case Types.Names.Double:
-                case Types.Names.U32:
-                case Types.Names.S32:
-                    return tmp.data;
-                case Types.Names.BoardPortInfo:
-                    if (tmp.totalConfs != 0)
-                    {
-                        tmp.confs = new PortInfo[tmp.totalConfs];
-                        for (int i = 0; i < tmp.confs.Length; i++)
-                        {
-                            tmp.confs[i] = new PortInfo();
-                            tmp.confs[i].address = tmp.confs[i].address;
-                            tmp.confs[i].bitSize = tmp.confs[i].bitSize;
-                            string str = System.Text.Encoding.UTF8.GetString(tmp.confs[i].name);
-                            tmp.confs[i].name = str.Substring(0, str.IndexOf('\0'));
-                        }
-                    }
+            //switch (mode_attr.Name)
+            //{
+            //    case Types.Names.BoardPortInfo:
+            //        if (tmp.totalConfs != 0)
+            //        {
+            //            tmp.confs = new PortInfo[tmp.totalConfs];
+            //            for (int i = 0; i < tmp.confs.Length; i++)
+            //            {
+            //                tmp.confs[i] = new PortInfo();
+            //                tmp.confs[i].address = tmp.confs[i].address;
+            //                tmp.confs[i].bitSize = tmp.confs[i].bitSize;
+            //                string str = System.Text.Encoding.UTF8.GetString(tmp.confs[i].name);
+            //                tmp.confs[i].name = str.Substring(0, str.IndexOf('\0'));
+            //            }
+            //        }
 
-                    if (tmp.totalPorts != 0)
-                    {
-                        tmp.ports = new PortInfo[tmp.totalPorts];
-                        for (int i = 0; i < tmp.ports.Length; i++)
-                        {
-                            tmp.ports[i] = new PortInfo();
-                            tmp.ports[i].address = tmp.ports[i].address;
-                            tmp.ports[i].bitSize = tmp.ports[i].bitSize;
-                            string str = System.Text.Encoding.UTF8.GetString(tmp.ports[i].name);
-                            tmp.ports[i].name = str.Substring(0, str.IndexOf('\0'));
-                        }
-                    }
-                    return tmp;
-                default:
-                    return null;
-            }
+            //        if (tmp.totalPorts != 0)
+            //        {
+            //            tmp.ports = new PortInfo[tmp.totalPorts];
+            //            for (int i = 0; i < tmp.ports.Length; i++)
+            //            {
+            //                tmp.ports[i] = new PortInfo();
+            //                tmp.ports[i].address = tmp.ports[i].address;
+            //                tmp.ports[i].bitSize = tmp.ports[i].bitSize;
+            //                string str = System.Text.Encoding.UTF8.GetString(tmp.ports[i].name);
+            //                tmp.ports[i].name = str.Substring(0, str.IndexOf('\0'));
+            //            }
+            //        }
+            //        return tmp;
+            //    default:
+            //        return null;
+            //}
 
 
             /*if (type == typeof(Types.BufferU32)) //TODO: Понять как работать с буферами

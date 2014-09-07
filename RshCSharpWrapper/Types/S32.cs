@@ -9,12 +9,11 @@ namespace RshCSharpWrapper.Types
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal class S32
     {
-        private Names type = Names.S32; // data code
+        private Names type = Names.S32;
         public Int32 data;
-        /*public S32(Int32 data)
+        public dynamic ret()
         {
-            type = Names.S32;
-            this.data = data;
-        }*/
+            return data;
+        }
     };
 }

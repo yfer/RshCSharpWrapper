@@ -7,14 +7,13 @@ using System.Text;
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal class S8P
+    internal class S8P : IReturn
     {
-        private Names type = Names.S8P; // data code
+        private Names type = Names.S8P;
         public IntPtr data = IntPtr.Zero;
-        /*public S8P(Int32 data)
+        public dynamic ReturnValue()
         {
-            type = Names.S8P;
-            this.data = IntPtr.Zero;
-        }*/
+            return Marshal.PtrToStringAnsi(data);
+        }
     };
 }

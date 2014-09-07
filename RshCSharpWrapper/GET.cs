@@ -21,7 +21,7 @@ namespace RshCSharpWrapper
         /// Прим.
         /// Данный код проверяет текущее (на момент вызова метода Device.Get()) состояние события, если нужно организовать цикл ожидания готовности данных, лучше воспользоваться кодом RSH_GET_WAIT_BUFFER_READY_EVENT.
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         BUFFER_READY = 0x10001,
         
         /// <summary>
@@ -33,7 +33,7 @@ namespace RshCSharpWrapper
         /// Предупреждения
         /// Вызов данного метода блокирует вызывающий поток до тех пор, пока не будет получено событие готовности данных, или таймаут! Если используется константа RSH_INFINITE_WAIT_TIME, единственный способ отменить ожидание и разблокировать поток - это вызов метода IRshDevice::Stop().
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         WAIT_BUFFER_READY_EVENT = 0x20001,
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace RshCSharpWrapper
         /// Прим.
         /// В большинстве случаев можно обойтись без вызова данного метода, но он может быть очень полезен для синхронизации потоков в сложных приложениях.
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         WAIT_GATHERING_COMPLETE = 0x20002,
         
         WAIT_NANO_DELAY = 0x20003,
@@ -55,7 +55,7 @@ namespace RshCSharpWrapper
         /// Каждое устройство расширения, подключаемое к компьютеру, имеет уникальный (для данной модели устройства) код устройства (product ID или PID) и код производителя (vendor ID или VID). Операционная система использует данные коды для идентифиакции устройства и выбора драйвера для него.
         /// Используя метод Device.Get() с данной константой, можно получить код оборудования для устройства.
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_PID = 0x30001,
         
         /// <summary>
@@ -64,7 +64,7 @@ namespace RshCSharpWrapper
         /// Каждое устройство расширения, подключаемое к компьютеру, имеет уникальный (для данной модели устройства) код устройства (product ID или PID) и код производителя (vendor ID или VID). Операционная система использует данные коды для идентифиакции устройства и выбора драйвера для него.
         /// Используя метод Device.Get() с данной константой, можно получить код производителя устройства.
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_VID = 0x30002,
         
         /// <summary>
@@ -72,7 +72,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [out] ::RSH_S8P
         /// Получение указателя на строковую константу с именем библиотеки абстракции. Так как возвращается указатель, выделять память под строку дополнительно не нужно.
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         DEVICE_NAME_VERBOSE = 0x30003,
         
         /// <summary>
@@ -80,7 +80,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [out] ::RSH_U16P
         /// Получение строки с названием библиотеки в формате UTF-16.
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         DEVICE_NAME_VERBOSE_UTF16 = 0x30004,
         
         /// <summary>
@@ -92,7 +92,7 @@ namespace RshCSharpWrapper
         /// Прим.
         /// Полный список свойств можно посмотреть здесь.
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         DEVICE_IS_CAPABLE = 0x30005,
         
         /// <summary>
@@ -103,7 +103,7 @@ namespace RshCSharpWrapper
         /// Прим.
         /// Полученные базовые адреса можно использовать в методе IRshDevice::Connect().
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_BASE_LIST = 0x30006,
 
         /// <summary>
@@ -118,56 +118,56 @@ namespace RshCSharpWrapper
         /// Минимально возможная частота дискретизации, генерируемая таймером
         /// Тип данных: [out] ::RSH_DOUBLE
         /// </summary>
-        [Mode(Names.BufferDouble)]
+        [Mode(typeof(Types.BufferDouble))]
         DEVICE_MIN_FREQUENCY = 0x30008,
         
         /// <summary>
         /// Максимально возможная частота дискретизации, генерируемая таймером
         /// Тип данных: [out] ::RSH_DOUBLE
         /// </summary>
-        [Mode(Names.BufferDouble)]
+        [Mode(typeof(Types.BufferDouble))]
         DEVICE_MAX_FREQUENCY = 0x30009,
         
         /// <summary>
         /// Минимальное значение амплитуды (МЗР)
         /// Тип данных: [out] ::RSH_S32
         /// </summary>
-        [Mode(Names.S32)]
+        [Mode(typeof(Types.S32))]
         DEVICE_MIN_AMP_LSB = 0x3000a,
         
         /// <summary>
         /// Максимальное значение амплитуды (МЗР)
         /// Тип данных: [out] ::RSH_S32
         /// </summary>
-        [Mode(Names.S32)]
+        [Mode(typeof(Types.S32))]
         DEVICE_MAX_AMP_LSB = 0x3000b,
         
         /// <summary>
         /// Таблица допустимых частот квантования
         /// Тип данных: [out] ::RSH_BUFFER_DOUBLE
         /// </summary>
-        [Mode(Names.BufferDouble)]
+        [Mode(typeof(Types.BufferDouble))]
         DEVICE_FREQUENCY_LIST = 0x3000c,
         
         /// <summary>
         /// Размер в байтах, необходимый для записи одного значения
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_DATA_SIZE_BYTES = 0x3000d,
         
         /// <summary>
         /// Разрядность АЦП (или ЦАП)
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_DATA_BITS = 0x3000e,
         
         /// <summary>
         /// Количество аналоговых каналов
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_NUMBER_CHANNELS = 0x3000f,
         
         /// <summary>
@@ -175,133 +175,133 @@ namespace RshCSharpWrapper
         /// Тип данных: [out] ::RSH_U32
         /// Актуально для систем и составных устройств (например, многоканальные осциллографы).
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_NUMBER_CHANNELS_BASE = 0x30010,
         
         /// <summary>
         /// Список допустимых коэффициентов усиления для аналоговых каналов.
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_GAIN_LIST = 0x30011,
         
         /// <summary>
         /// Получение массива с коэффициентами усиления для входа 50Ом
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_GAIN_LIST_50_OHM = 0x30012,
         
         /// <summary>
         /// Получение массива с коэффициентами усиления для входа 1МОм
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_GAIN_LIST_1_MOHM = 0x30013,
         
         /// <summary>
         /// Размер памяти, установленной на плате (или доступной для сбора)
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_MEMORY_SIZE = 0x30014,
         
         /// <summary>
         /// Список допустимых размеров блоков собираемых данных
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_SIZE_LIST = 0x30015,
         
         /// <summary>
         /// Список допустимых размеров буфера в простом режиме работы (без использования удвоения/учетверения частоты)
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_SIZE_LIST_SINGLE = 0x30016,
         
         /// <summary>
         /// Список допустимых размеров буфера в режиме удвоения
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_SIZE_LIST_DOUBLE = 0x30017,
         
         /// <summary>
         /// Список допустимых размеров буфера в режиме учетверения
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_SIZE_LIST_QUADRO = 0x30018,
         
         /// <summary>
         /// Список допустимых размеров пакетов
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_PACKET_LIST = 0x30019,
         
         /// <summary>
         /// Входной диапазон в вольтах при коэффициенте усиления 1.
         /// Тип данных: [out] ::RSH_DOUBLE
         /// </summary>
-        [Mode(Names.Double)]
+        [Mode(typeof(Types.Double))]
         DEVICE_INPUT_RANGE_VOLTS = 0x3001a,
         
         /// <summary>
         /// Выходной диапазон в вольтах при коэффициенте усиления 1 (без использования аттенюатора)
         /// Тип данных: [out] ::RSH_DOUBLE
         /// </summary>
-        [Mode(Names.Double)]
+        [Mode(typeof(Types.Double))]
         DEVICE_OUTPUT_RANGE_VOLTS = 0x3001b,
         
         /// <summary>
         /// Список допустимых коэффициентов усиления для входа внешней синхронизации
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_EXT_SYNC_GAINLIST = 0x3001c,
         
         /// <summary>
         /// олучение массива с коэффициентами усиления внешней синхронизации для входа 50Ом
         /// Тип данных: [out] ::RSH_BUFFER_U32
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_EXT_SYNC_GAIN_LIST_50_OHM = 0x3001d,
         
         /// <summary>
         /// Получение массива с коэффициентами усиления внешней синхронизации для входа 1МОм
         /// Тип данных: [out] ::RSH_BUFFER_U32       
         /// </summary>
-        [Mode(Names.BufferU32)]
+        [Mode(typeof(Types.BufferU32))]
         DEVICE_EXT_SYNC_GAIN_LIST_1_MOHM = 0x3001e,
         
         /// <summary>
         /// Диапазон входа внешней синхронизации в вольтах при коэффициенте усиления 1.
         /// Тип данных: [out] ::RSH_DOUBLE
         /// </summary>
-        [Mode(Names.Double)]
+        [Mode(typeof(Types.Double))]
         DEVICE_EXT_SYNC_INPUT_RANGE_VOLTS = 0x3001f,
         
         /// <summary>
         /// Получeние структуры из со служебной информацией о портах
         /// Тип данных: [out] RshBoardPortInfo       
         /// </summary>
-        [Mode(Names.BoardPortInfo)]
+        [Mode(typeof(Types.BoardPortInfo))]
         DEVICE_PORT_INFO = 0x30020,
         
         /// <summary>
         /// Получение заводского номера устройства
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_SERIAL_NUMBER = 0x30021,
         
         /// <summary>
         /// Размер предыстории в отсчетах
         /// Тип данных: [out] ::RSH_U32        
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_PREHISTORY_SIZE = 0x30022,
         
         /// <summary>
@@ -309,7 +309,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [out] ::RSH_U32
         /// Количество каналов, выбраных для работы (доступно после вызова метода IRshDevice::Init() )
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_ACTIVE_CHANNELS_NUMBER = 0x30023,
         
         /// <summary>
@@ -341,7 +341,7 @@ namespace RshCSharpWrapper
         /// Необходимо сделать:
         /// Возможно, требуется доработка (данная опция только у Леонардо 2)
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         DEVICE_ICP_POWER_SET = 0x30027,
         
         /// <summary>
@@ -394,14 +394,14 @@ namespace RshCSharpWrapper
         /// Минимальное количество отсчетов (размер буфера) на канал
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_MIN_SAMPLES_PER_CHANNEL = 0x3002f,
                 
         /// <summary>
         /// Максимальное количество отсчетов (размер буфера) на канал
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_MAX_SAMPLES_PER_CHANNEL = 0x30030,
         
         /// <summary>
@@ -433,7 +433,7 @@ namespace RshCSharpWrapper
         /// GGA,123519,4807.038,N,01131.324,E,1,08,0.9,545.4,M,46.9,M, , *42< >
         /// (пример для NMEA-0183). Подробное описание формата можно найти в руководстве пользователя для устройства.
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         DEVICE_GPS_DATA = 0x30034,
         
         /// <summary>
@@ -441,7 +441,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [out] ::RSH_U16P
         /// Аналог RSH_GET_DEVICE_GPS_DATA но в формате UTF-16.
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         DEVICE_GPS_DATA_UTF16 = 0x30035,
         
         /// <summary>
@@ -449,7 +449,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [out] ::RSH_U32
         /// Используется для задания интервала автоматического запуска сбора данных, для тех устройств, которые поддерживают данную возможность.
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         DEVICE_AUTO_START_INTERVAL_SET = 0x30036,
         
         /// <summary>
@@ -458,77 +458,77 @@ namespace RshCSharpWrapper
         /// Получение текущего значения напряжения питания в вольтах.
         /// Как правило, применияется для устройств с автономным питанием.
         /// </summary>
-        [Mode(Names.Double)]
+        [Mode(typeof(Types.Double))]
         DEVICE_POWER_SOURCE_VOLTAGE = 0x30037,
         
         /// <summary>
         /// Версия SDK major.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         SDK_VERSION_MAJOR = 0x40001,
         
         /// <summary>
         /// Версия SDK minor.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         SDK_VERSION_MINOR = 0x40002,
         
         /// <summary>
         /// Строковая константа с версией SDK.
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         SDK_VERSION_STRING = 0x40003,
         
         /// <summary>
         /// Строковая константа - название организации
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         SDK_COPYRIGHT_STRING = 0x40004,
         
         /// <summary>
         /// Строковая константа с версией SDK (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         SDK_COPYRIGHT_STRING_UTF16 = 0x40005,
         
         /// <summary>
         /// Строковая константа - название организации (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         SDK_VERSION_STRING_UTF16 = 0x40006,
         
         /// <summary>
         /// Получение версии библиотеки - major.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         LIBRARY_VERSION_MAJOR = 0x50001,
         
         /// <summary>
         /// Получение версии библиотеки - minor.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         LIBRARY_VERSION_MINOR = 0x50002,
         
         /// <summary>
         /// Получение версии библиотеки - build.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         LIBRARY_VERSION_BUILD = 0x50003,
         
         /// <summary>
         /// Получение версии библиотеки - date.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         LIBRARY_VERSION_DATE = 0x50004,
         
         /// <summary>
@@ -536,245 +536,245 @@ namespace RshCSharpWrapper
         /// Тип данных: [out] ::RSH_S8P
         /// 
         /// </summary>        
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         LIBRARY_INTERFACE_NAME = 0x50005,
         
         /// <summary>
         /// Строковая константа - имя интерфейса (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         LIBRARY_INTERFACE_NAME_UTF16 = 0x50006,
         
         /// <summary>
         /// Строковая константа - имя модуля
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         LIBRARY_MODULE_NAME = 0x50007,
         
         /// <summary>
         /// Строковая константа - имя модуля (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         LIBRARY_MODULE_NAME_UTF16 = 0x50008,
         
         /// <summary>
         /// Строковая константа - путь размещения файла библиотеки
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         LIBRARY_PATH = 0x50009,
         
         /// <summary>
         /// Строковая константа - путь размещения файла библиотеки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         LIBRARY_PATH_UTF16 = 0x5000a,
         
         /// <summary>
         /// Строковая константа - имя файла библиотеки абстракции
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         LIBRARY_FILENAME = 0x5000b,
         
         /// <summary>
         /// Строковая константа - имя файла библиотеки абстракции (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         LIBRARY_FILENAME_UTF16 = 0x5000c,
         
         /// <summary>
         /// Строковая константа - версия библиотеки абстракции
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         LIBRARY_VERSION_STR = 0x5000d,
         
         /// <summary>
         /// Строковая константа - версия библиотеки абстракции (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         LIBRARY_VERSION_STR_UTF16 = 0x5000e,
         
         /// <summary>
         /// Строковая константа - описание библиотеки (как в свойствах файла)
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         LIBRARY_DESCRIPTION = 0x5000f,
         
         /// <summary>
         /// Строковая константа - описание библиотеки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         LIBRARY_DESCRIPTION_UTF16 = 0x50010,
         
         /// <summary>
         /// Строковая константа - внутреннее имя библиотеки (как в свойствах файла)
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         LIBRARY_PRODUCT_NAME = 0x50011,
         
         /// <summary>
         /// Строковая константа - внутреннее имя библиотеки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         LIBRARY_PRODUCT_NAME_UTF16 = 0x50012,
         
         /// <summary>
         /// Получение версии базовой библиотеки - major.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         CORELIB_VERSION_MAJOR = 0x60001,
         
         /// <summary>
         /// Получение версии базововй библиотеки - minor.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         CORELIB_VERSION_MINOR = 0x60002,
         
         /// <summary>
         /// Получение версии базововй библиотеки - build.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         CORELIB_VERSION_BUILD = 0x60003,
         
         /// <summary>
         /// Получение версии базововй библиотеки - date.
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         CORELIB_VERSION_DATE = 0x60004,
         
         /// <summary>
         /// Строковая константа - имя интерфейса базовой библиотеки
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         CORELIB_INTERFACE_NAME = 0x60005,
         
         /// <summary>
         /// Строковая константа - имя интерфейса базовой библиотеки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         CORELIB_INTERFACE_NAME_UTF16 = 0x60006,
         
         /// <summary>
         /// Строковая константа - имя модуля базовой библиотеки
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         CORELIB_MODULE_NAME = 0x60007,
         
         /// <summary>
         /// Строковая константа - имя модуля базовой библиотеки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         CORELIB_MODULE_NAME_UTF16 = 0x60008,
         
         /// <summary>
         /// Строковая константа - путь размещения файла базовой библиотеки
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         CORELIB_PATH = 0x60009,
         
         /// <summary>
         /// Строковая константа - путь размещения файла базовой библиотеки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         CORELIB_PATH_UTF16 = 0x6000a,
         
         /// <summary>
         /// Строковая константа - имя файла базовой библиотеки
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         CORELIB_FILENAME = 0x6000b,
         
         /// <summary>
         /// Строковая константа - имя файла базовой библиотеки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         CORELIB_FILENAME_UTF16 = 0x6000c,
         
         /// <summary>
         /// Строковая константа - версия базовой библиотеки
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         CORELIB_VERSION_STR = 0x6000d,
         
         /// <summary>
         /// Строковая константа - версия базовой библиотеки Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         CORELIB_VERSION_STR_UTF16 = 0x6000e,
         
         /// <summary>
         /// Строковая константа - описание базовой библиотеки (как в свойствах файла)
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         CORELIB_DESCRIPTION = 0x6000f,
         
         /// <summary>
         /// Строковая константа - описание базовой библиотеки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         CORELIB_DESCRIPTION_UTF16 = 0x60010,
         
         /// <summary>
         /// Строковая константа - внутреннее имя базовой библиотеки (как в свойствах файла)
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         CORELIB_PRODUCT_NAME = 0x60011,
         
         /// <summary>
         /// Строковая константа - внутреннее имя базовой библиотеки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         CORELIB_PRODUCT_NAME_UTF16 = 0x60012,
         
         /// <summary>
         /// Версия API драйвера (актуально для PLX устройств)
         /// Тип данных: [out] ::RSH_U32
         /// </summary>
-        [Mode(Names.U32)]
+        [Mode(typeof(Types.U32))]
         CORELIB_VERSION_INTERNAL_API = 0x60013,
         
         /// <summary>
         /// Версия API драйвера в виде строки
         /// Тип данных: [out] ::RSH_S8P
         /// </summary>
-        [Mode(Names.S8P)]
+        [Mode(typeof(Types.S8P))]
         CORELIB_VERSION_INTERNAL_API_STR = 0x60014,
         
         /// <summary>
         /// Версия API драйвера в виде строки (Unicode)
         /// Тип данных: [out] ::RSH_U16P
         /// </summary>
-        [Mode(Names.U16P)]
+        [Mode(typeof(Types.U16P))]
         CORELIB_VERSION_INTERNAL_API_STR_UTF16 = 0x60015,
         
         /// <summary>
@@ -782,7 +782,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ ESTIMATE_FORWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         DPA_FFT_NEW_FFT_PLAN_ESTIMATE_FORWARD_SET = 0xb0001,
         
         /// <summary>
@@ -790,7 +790,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ ESTIMATE_BACKWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         DPA_FFT_NEW_FFT_PLAN_ESTIMATE_BACKWARD_SET = 0xb0002,
         
         /// <summary>
@@ -798,7 +798,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ MEASURE_FORWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         DPA_FFT_NEW_FFT_PLAN_MEASURE_FORWARD_SET = 0xb0003,
         
         /// <summary>
@@ -806,7 +806,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ MEASURE_BACKWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         DPA_FFT_NEW_FFT_PLAN_MEASURE_BACKWARD_SET = 0xb0004,
         
         /// <summary>
@@ -814,7 +814,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ PATIENT_FORWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         DPA_FFT_NEW_FFT_PLAN_PATIENT_FORWARD_SET = 0xb0005,
         
         /// <summary>
@@ -822,7 +822,7 @@ namespace RshCSharpWrapper
         /// Тип данных: [in] ::RSH_U32
         /// Модуль DPA_FFT, установка плана БПФ PATIENT_BACKWARD. В качестве данных - желаемый размер буфера.
         /// </summary>
-        [Mode(Names.U32, Input = true)]
+        [Mode(typeof(Types.U32), Input = true)]
         DPA_FFT_NEW_FFT_PLAN_PATIENT_BACKWARD_SET = 0xb0006,
         
         LIBRARY_FREE_RESOURCES = 0x10050001,
@@ -833,11 +833,11 @@ namespace RshCSharpWrapper
     [AttributeUsage(System.AttributeTargets.All)]
     public class ModeAttribute : Attribute
     {        
-        public Names Name;
+        public Type Type;
         public bool Input = false;
-        public ModeAttribute(Names name)
+        public ModeAttribute(Type type)
         {
-            this.Name = name;
+            this.Type = type;
         }
     }
     public static class GETHelper
