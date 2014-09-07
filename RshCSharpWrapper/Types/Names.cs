@@ -8,34 +8,21 @@ namespace RshCSharpWrapper.Types
     public enum Names : uint
     {
         TypeUndefined = 0x0,
-        [CorrespondingType(typeof(U8))]
         U8 = 0xadc01001,
-        [CorrespondingType(typeof(S8))]
         S8 = 0xadc01002,
-        [CorrespondingType(typeof(U16))]
         U16 = 0xadc01003,
-        [CorrespondingType(typeof(S16))]
         S16 = 0xadc01004,
-        [CorrespondingType(typeof(U32))]
         U32 = 0xadc01005,
-        [CorrespondingType(typeof(S32))]
         S32 = 0xadc01006,
-        [CorrespondingType(typeof(U64))]
         U64 = 0xadc01007,
-        [CorrespondingType(typeof(S64))]
         S64 = 0xadc01008,
         Float = 0xadc01009,
-        [CorrespondingType(typeof(Types.Double))]
         Double = 0xadc0100a,
         Bool = 0xadc0100b,
         VoidP = 0xadc02001,
-        [CorrespondingType(typeof(U8P))]
         U8P = 0xadc02002,
-        [CorrespondingType(typeof(S8P))]
         S8P = 0xadc02003,
-        [CorrespondingType(typeof(U16P))]
         U16P = 0xadc02004,
-        [CorrespondingType(typeof(S16P))]
         S16P = 0xadc02005,
         U32P = 0xadc02006,
         S32P = 0xadc02007,
@@ -131,15 +118,5 @@ namespace RshCSharpWrapper.Types
         DPADataFindGap = 0xadc07003,
         DPADataFindFront = 0xadc07004,
         DPADataGeneratorSignalBase = 0xadc07005,
-    }
-
-    [System.AttributeUsage(System.AttributeTargets.All)]
-    public class CorrespondingTypeAttribute : System.Attribute
-    {
-        public Type Type;
-        public CorrespondingTypeAttribute(Type type)
-        {
-            this.Type = type;
-        }
     }
 }
