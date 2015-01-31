@@ -517,6 +517,24 @@ namespace RshCSharpWrapper
         };
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        internal struct RshRegisterInternal
+        {
+            private Names typeName;
+
+            public uint size;
+            public uint offset;
+            public uint value;
+
+            public RshRegisterInternal(UInt32 ot)
+            {
+                typeName = Names.rshRegister;
+                size = 1;
+                offset = 0;
+                value = 0;
+            }
+        };
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         internal struct RshInitDAC
         {
             private Names typeName;     // data code				URshInitDAC
@@ -710,6 +728,13 @@ namespace RshCSharpWrapper
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshBoardPortInfo value);  
 
+        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, ref Types.RshRegisterInternal value);  
+        /*
+        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern uint UniDriverLVGetArrayDouble(IntPtr deviceHandle, uint getMode, uint size, ref uint received, ref double[] value);  
+        */
+        
         #endregion
 
         #region GetData

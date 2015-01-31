@@ -365,17 +365,35 @@ namespace RshCSharpWrapper
             }
         };
         
+        public class RshRegister
+        {
+            public uint size;
+            public uint offset;
+            public uint value;
+
+            public RshRegister()
+            {
+                size = 1;
+                offset = 0;
+                value = 0;
+            }
+        };
+        
         public class Device
         {
 
             private IntPtr deviceHandle;
+            private Types.RshBufferS8 bufferS8;
             private Types.RshBufferS16 bufferS16;
             private Types.RshBufferU16 bufferU16;
             private Types.RshBufferS32 bufferS32;
+            private Types.RshBufferU32 bufferU32;
+            
             private Types.RshBufferDouble bufferDouble;
 
             private short[] tmpBufferShort = new short[1]; // буфер используется в GetData для копирования данных типа unsigned
             private int[] tmpBufferInt = new int[1];
+            private double[] tmpBufferDouble = new double[1];
 
             private uint operationStatus;
             public RSH_API OperationStatus
@@ -391,9 +409,11 @@ namespace RshCSharpWrapper
             {
                 deviceHandle = IntPtr.Zero;
 
+                bufferS8 = new Types.RshBufferS8(0);
                 bufferS16 = new Types.RshBufferS16(0);
                 bufferU16 = new Types.RshBufferU16(0);
                 bufferS32 = new Types.RshBufferS32(0);
+                bufferU32 = new Types.RshBufferU32(0);
                 bufferDouble = new Types.RshBufferDouble(0);
             }
             public Device(string deviceName)
@@ -402,9 +422,11 @@ namespace RshCSharpWrapper
                 {
                     deviceHandle = IntPtr.Zero;
 
+                    bufferS8 = new Types.RshBufferS8(0);
                     bufferU16 = new Types.RshBufferU16(0);
                     bufferS16 = new Types.RshBufferS16(0);
                     bufferS32 = new Types.RshBufferS32(0);
+                    bufferU32 = new Types.RshBufferU32(0);
                     bufferDouble = new Types.RshBufferDouble(0);
 
                     EstablishDriverConnection(deviceName);
@@ -418,9 +440,11 @@ namespace RshCSharpWrapper
             {
                 try
                 {
+                    Connector.UniDriverFreeBuffer(ref bufferS8);
                     Connector.UniDriverFreeBuffer(ref bufferS16);
                     Connector.UniDriverFreeBuffer(ref bufferU16);
                     Connector.UniDriverFreeBuffer(ref bufferS32);
+                    Connector.UniDriverFreeBuffer(ref bufferU32);
                     Connector.UniDriverFreeBuffer(ref bufferDouble);
                     Connector.UniDriverCloseDeviceHandle(deviceHandle);
                 }
@@ -863,6 +887,51 @@ namespace RshCSharpWrapper
                 return st;
             }
 
+            public RSH_API GetData(char[] buffer, RSH_DATA_MODE mode = RSH_DATA_MODE.NO_FLAGS)
+            {
+                if (deviceHandle == IntPtr.Zero) return RSH_API.DEVICE_DLLWASNOTLOADED;
+
+                RSH_API st = RSH_API.SUCCESS;
+
+
+                try
+                {
+                    st = (RSH_API)Connector.UniDriverAllocateBuffer(ref bufferS8, (uint)buffer.Length);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("Unable to load DLL"))
+                        return (RSH_API)(operationStatus = (uint)RSH_API.UNIDRIVER_DLLWASNOTLOADED);
+                    else
+                        return RSH_API.UNDEFINED;
+                }
+
+                if (st == RSH_API.SUCCESS)
+                {
+                    try
+                    {
+                        operationStatus = Connector.UniDriverGetData(deviceHandle, (uint)mode, ref bufferS8);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        if (ex.Message.Contains("Unable to load DLL"))
+                            return (RSH_API)(operationStatus = (uint)RSH_API.UNIDRIVER_DLLWASNOTLOADED);
+                        else
+                            return RSH_API.UNDEFINED;
+                    }
+                    st = (RSH_API)(operationStatus & MASK_RSH_ERROR);
+
+                    if (st != RSH_API.SUCCESS) return st;
+
+                    System.Runtime.InteropServices.Marshal.Copy(bufferS8.ptr, buffer, 0, (int)bufferS8.size);
+                }
+
+                return st;
+            }
+
+
             public RSH_API GetData(ushort[] buffer, RSH_DATA_MODE mode = RSH_DATA_MODE.NO_FLAGS)
             {
                 if (deviceHandle == IntPtr.Zero) return RSH_API.DEVICE_DLLWASNOTLOADED;
@@ -1101,6 +1170,40 @@ namespace RshCSharpWrapper
                 return st;
             }
 
+            public RSH_API Get(RSH_GET mode, ref RshRegister reg)
+            {
+                if (deviceHandle == IntPtr.Zero) return RSH_API.DEVICE_DLLWASNOTLOADED;
+
+                RSH_API st = RSH_API.SUCCESS;
+
+                Types.RshRegisterInternal tmp = new Types.RshRegisterInternal(0);
+                tmp.size = reg.size;
+                tmp.offset = reg.offset;
+                tmp.value = reg.value;
+                try
+                {
+                    operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("Unable to load DLL"))
+                        return (RSH_API)(operationStatus = (uint)RSH_API.UNIDRIVER_DLLWASNOTLOADED);
+                    else
+                        return RSH_API.UNDEFINED;
+                }
+                st = (RSH_API)(operationStatus & MASK_RSH_ERROR);
+
+                if (st == RSH_API.SUCCESS)
+                {
+                    reg.size = tmp.size;
+                    reg.offset = tmp.offset;
+                    reg.value = tmp.value;
+                }
+
+                return st;
+            }
+
 
             public RSH_API Get(RSH_GET mode, out string value)
             {
@@ -1202,6 +1305,111 @@ namespace RshCSharpWrapper
                 }
                 return st;
             }
+
+
+            public RSH_API Get(RSH_GET mode, ref List<uint> buffer)
+            {
+                if (deviceHandle == IntPtr.Zero) return RSH_API.DEVICE_DLLWASNOTLOADED;
+
+                RSH_API st = RSH_API.SUCCESS;
+
+                try
+                {
+                    st = (RSH_API)Connector.UniDriverAllocateBuffer(ref bufferU32, 32);
+                    tmpBufferInt = new int[32];
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("Unable to load DLL"))
+                        return (RSH_API)(operationStatus = (uint)RSH_API.UNIDRIVER_DLLWASNOTLOADED);
+                    else
+                        return RSH_API.UNDEFINED;
+                }
+
+                if (st == RSH_API.SUCCESS)
+                {
+
+                    try
+                    {
+                        operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref bufferU32);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        if (ex.Message.Contains("Unable to load DLL"))
+                            return (RSH_API)(operationStatus = (uint)RSH_API.UNIDRIVER_DLLWASNOTLOADED);
+                        else
+                            return RSH_API.UNDEFINED;
+                    }
+                    st = (RSH_API)(operationStatus & MASK_RSH_ERROR);
+
+                    if (st != RSH_API.SUCCESS) return st;
+
+                    System.Runtime.InteropServices.Marshal.Copy(bufferU32.ptr, tmpBufferInt, 0, (int)bufferU32.size);
+
+                    if (bufferU32.size > tmpBufferInt.Length)
+                        return RSH_API.BUFFER_INSUFFICIENTSIZE;
+
+                    for (int i = 0; i < bufferU32.size; i++)
+                        buffer.Add(Convert.ToUInt32(tmpBufferInt[i]));
+                }
+
+                return st;
+            }
+
+            public RSH_API Get(RSH_GET mode, ref List<double> buffer)
+            {
+                if (deviceHandle == IntPtr.Zero) return RSH_API.DEVICE_DLLWASNOTLOADED;
+
+                RSH_API st = RSH_API.SUCCESS;
+
+                try
+                {
+                    st = (RSH_API)Connector.UniDriverAllocateBuffer(ref bufferDouble, 32);
+                    tmpBufferDouble = new double[32];
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("Unable to load DLL"))
+                        return (RSH_API)(operationStatus = (uint)RSH_API.UNIDRIVER_DLLWASNOTLOADED);
+                    else
+                        return RSH_API.UNDEFINED;
+                }
+
+                if (st == RSH_API.SUCCESS)
+                {
+
+                    try
+                    {
+                        operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref bufferDouble);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        if (ex.Message.Contains("Unable to load DLL"))
+                            return (RSH_API)(operationStatus = (uint)RSH_API.UNIDRIVER_DLLWASNOTLOADED);
+                        else
+                            return RSH_API.UNDEFINED;
+                    }
+                    st = (RSH_API)(operationStatus & MASK_RSH_ERROR);
+
+                    if (st != RSH_API.SUCCESS) return st;
+
+                    System.Runtime.InteropServices.Marshal.Copy(bufferDouble.ptr, tmpBufferDouble, 0, (int)bufferDouble.size);
+
+                    if (bufferDouble.size > tmpBufferDouble.Length)
+                        return RSH_API.BUFFER_INSUFFICIENTSIZE;
+
+                    for (int i = 0; i < bufferDouble.size; i++)
+                        buffer.Add(tmpBufferDouble[i]);
+                }
+
+                return st;
+            }
+
+            
             public static RSH_API RshGetErrorDescription(RSH_API errorCode, out string value, RSH_LANGUAGE language)
             {
                 value = "";

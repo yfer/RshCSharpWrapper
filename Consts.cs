@@ -110,6 +110,7 @@ namespace RshCSharpWrapper
 			rshCalibrationItemRegister = 0xadc05017,
 			rshCalibrationItemButton = 0xadc05018,
 			rshCalibrationItemFilePath = 0xadc05019,
+			rshCalibrationItemRegOffset = 0xadc0501a,
 			rshBoardInfoDMA = 0xadc06001,
 			rshBoardInfoMemory = 0xadc06002,
 			rshBoardInfoDAC = 0xadc06003,
@@ -120,6 +121,7 @@ namespace RshCSharpWrapper
 			rshDPADataFindGap = 0xadc07003,
 			rshDPADataFindFront = 0xadc07004,
 			rshDPADataGeneratorSignalBase = 0xadc07005,
+			rshDPADataFFTPowerSpectrum = 0xadc07006,
 		}
 	}
 
@@ -565,6 +567,10 @@ namespace RshCSharpWrapper
 		/// </summary>
 		BUFFER_INSUFFICIENTSIZE = 0xa0b0000,
 		/// <summary>
+		/// Размер буфера задан неверно.
+		/// </summary>
+		BUFFER_WRONGSIZE = 0xa0c0000,
+		/// <summary>
 		/// Объект не найден.
 		/// </summary>
 		OBJECT_NOTFOUND = 0xb010000,
@@ -781,6 +787,10 @@ namespace RshCSharpWrapper
 		/// </summary>
 		PLXAPI_CANTCREATEDEVICEOBJECT = 0xf280000,
 		/// <summary>
+		/// Серийный номер платы не прописан в EEPROM.
+		/// </summary>
+		PLXAPI_EEPROMNOSERIAL = 0xf290000,
+		/// <summary>
 		/// Ошибка синтаксиса в скрипте
 		/// </summary>
 		SCRIPT_SYNTAXERROR = 0x10010000,
@@ -969,6 +979,7 @@ namespace RshCSharpWrapper
 		DEVICE_FLASH_INFO_ONBOARD = 52,
 		DEVICE_GPS_MODULE_INSTALLED = 53,
 		DEVICE_AUTO_START_MODE = 54,
+		DEVICE_DIGITAL_PORT_DATA_WITH_ANALOG_DATA = 55,
 		SOFT_CALIBRATION_IS_AVAILABLE = 512,
 		SOFT_GATHERING_IS_AVAILABLE = 513,
 		SOFT_PGATHERING_IS_AVAILABLE = 514,
@@ -993,6 +1004,8 @@ namespace RshCSharpWrapper
 		WAIT_BUFFER_READY_EVENT = 0x20001,
 		WAIT_GATHERING_COMPLETE = 0x20002,
 		WAIT_NANO_DELAY = 0x20003,
+		WAIT_INTERRUPT0 = 0x20004,
+		WAIT_INTERRUPT1 = 0x20005,
 		DEVICE_PID = 0x30001,
 		DEVICE_VID = 0x30002,
 		DEVICE_NAME_VERBOSE = 0x30003,
@@ -1093,6 +1106,8 @@ namespace RshCSharpWrapper
 		CORELIB_VERSION_INTERNAL_API = 0x60013,
 		CORELIB_VERSION_INTERNAL_API_STR = 0x60014,
 		CORELIB_VERSION_INTERNAL_API_STR_UTF16 = 0x60015,
+		RESET_WAIT_INTERRUPT0 = 0x70001,
+		RESET_WAIT_INTERRUPT1 = 0x70002,
 		DPA_FFT_NEW_FFT_PLAN_ESTIMATE_FORWARD_SET = 0xb0001,
 		DPA_FFT_NEW_FFT_PLAN_ESTIMATE_BACKWARD_SET = 0xb0002,
 		DPA_FFT_NEW_FFT_PLAN_MEASURE_FORWARD_SET = 0xb0003,
