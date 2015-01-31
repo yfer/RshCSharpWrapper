@@ -7,12 +7,12 @@ using System.Text;
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal struct BufferU32
+    public class BufferU32 : IReturn
     {
         private Names typeName;  //!< тип данных буфера
         public uint size;  //!< данное поле используется после вызова UniDriverGetData(), чтобы отразить реальное количество скопированных данных в буфер
         public uint psize; //!< количество элементов в буфере
-        private uint id; // кникальный идентификатор буфера (служебное поле)
+        private uint id; // уникальный идентификатор буфера (служебное поле)
         public IntPtr ptr;   //!< указатель на буфер
 
         public BufferU32(uint size)
@@ -22,6 +22,11 @@ namespace RshCSharpWrapper.Types
             this.psize = 0;
             this.ptr = IntPtr.Zero;
             this.id = 0;
+        }
+
+        public dynamic ReturnValue()
+        {
+            throw new NotImplementedException();
         }
     };
 }

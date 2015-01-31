@@ -448,6 +448,10 @@ namespace RshCSharpWrapper
         /// </summary>
         BUFFER_INSUFFICIENTSIZE = 0xa0b0000,
         /// <summary>
+        /// Размер буфера задан неверно.
+        /// </summary>
+        BUFFER_WRONGSIZE = 0xa0c0000,
+        /// <summary>
         /// Объект не найден.
         /// </summary>
         OBJECT_NOTFOUND = 0xb010000,
@@ -663,6 +667,10 @@ namespace RshCSharpWrapper
         /// PLX API - не удалось создать объект устройства
         /// </summary>
         PLXAPI_CANTCREATEDEVICEOBJECT = 0xf280000,
+        /// <summary>
+        /// Серийный номер платы не прописан в EEPROM.
+        /// </summary>
+        PLXAPI_EEPROMNOSERIAL = 0xf290000,
         /// <summary>
         /// Ошибка синтаксиса в скрипте
         /// </summary>

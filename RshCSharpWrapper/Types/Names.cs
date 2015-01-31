@@ -108,6 +108,7 @@ namespace RshCSharpWrapper.Types
         CalibrationItemRegister = 0xadc05017,
         CalibrationItemButton = 0xadc05018,
         CalibrationItemFilePath = 0xadc05019,
+        СalibrationItemRegOffset = 0xadc0501a,
         BoardInfoDMA = 0xadc06001,
         BoardInfoMemory = 0xadc06002,
         BoardInfoDAC = 0xadc06003,
@@ -118,5 +119,6 @@ namespace RshCSharpWrapper.Types
         DPADataFindGap = 0xadc07003,
         DPADataFindFront = 0xadc07004,
         DPADataGeneratorSignalBase = 0xadc07005,
+        DPADataFFTPowerSpectrum = 0xadc07006,
     }
 }

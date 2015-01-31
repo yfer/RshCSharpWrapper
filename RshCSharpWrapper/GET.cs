@@ -48,7 +48,8 @@ namespace RshCSharpWrapper
         WAIT_GATHERING_COMPLETE = 0x20002,
         
         WAIT_NANO_DELAY = 0x20003,
-        
+        WAIT_INTERRUPT0 = 0x20004,
+        WAIT_INTERRUPT1 = 0x20005,
         /// <summary>
         /// Получение идентификационного кода устройства.
         /// Тип данных: [out] ::RSH_U32
@@ -776,7 +777,10 @@ namespace RshCSharpWrapper
         /// </summary>
         [Mode(typeof(Types.U16P))]
         CORELIB_VERSION_INTERNAL_API_STR_UTF16 = 0x60015,
-        
+
+        RESET_WAIT_INTERRUPT0 = 0x70001,
+        RESET_WAIT_INTERRUPT1 = 0x70002,
+
         /// <summary>
         /// Установка плана БПФ ESTIMATE_FORWARD.
         /// Тип данных: [in] ::RSH_U32

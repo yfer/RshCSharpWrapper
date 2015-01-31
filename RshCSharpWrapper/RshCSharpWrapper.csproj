@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Device\Register.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RshDevice.cs" />
     <Compile Include="Device\Device.cs" />

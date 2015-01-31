@@ -16,10 +16,12 @@ namespace RshCSharpWrapper.Device
         private Types.BufferS16 bufferS16;
         private Types.BufferU16 bufferU16;
         private Types.BufferS32 bufferS32;
+        private Types.BufferU32 bufferU32;
         private Types.BufferDouble bufferDouble;
 
         private short[] tmpBufferShort = new short[1]; // буфер используется в GetData для копирования данных типа unsigned
         private int[] tmpBufferInt = new int[1];
+        private double[] tmpBufferDouble = new double[1];
 
         private const uint MASK_RSH_ERROR = 0xffff0000;
         private const uint MASK_WINAPI_ERROR = 0x0000ffff;
@@ -31,6 +33,7 @@ namespace RshCSharpWrapper.Device
             bufferS16 = new Types.BufferS16(0);
             bufferU16 = new Types.BufferU16(0);
             bufferS32 = new Types.BufferS32(0);
+            bufferU32 = new Types.BufferU32(0);
             bufferDouble = new Types.BufferDouble(0);
         }
         public Device(string deviceName):this()
@@ -63,9 +66,11 @@ namespace RshCSharpWrapper.Device
             // Free any unmanaged objects here. 
             //
 
+            Connector.UniDriverFreeBuffer(ref bufferS8);
             Connector.UniDriverFreeBuffer(ref bufferS16);
             Connector.UniDriverFreeBuffer(ref bufferU16);
             Connector.UniDriverFreeBuffer(ref bufferS32);
+            Connector.UniDriverFreeBuffer(ref bufferU32);
             Connector.UniDriverFreeBuffer(ref bufferDouble);
             Connector.UniDriverCloseDeviceHandle(deviceHandle);
 
@@ -559,6 +564,50 @@ namespace RshCSharpWrapper.Device
                 if (st != API.SUCCESS) return st;
 
                 System.Runtime.InteropServices.Marshal.Copy(bufferS16.ptr, buffer, 0, (int)bufferS16.size);
+            }
+
+            return st;
+        }
+        public API GetData(char[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
+        {
+            uint operationStatus;
+            if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
+
+            API st = API.SUCCESS;
+
+
+            try
+            {
+                st = (API)Connector.UniDriverAllocateBuffer(ref bufferS8, (uint)buffer.Length);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                if (ex.Message.Contains("Unable to load DLL"))
+                    return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
+                else
+                    return API.UNDEFINED;
+            }
+
+            if (st == API.SUCCESS)
+            {
+                try
+                {
+                    operationStatus = Connector.UniDriverGetData(deviceHandle, (uint)mode, ref bufferS8);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("Unable to load DLL"))
+                        return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
+                    else
+                        return API.UNDEFINED;
+                }
+                st = (API)(operationStatus & MASK_RSH_ERROR);
+
+                if (st != API.SUCCESS) return st;
+
+                System.Runtime.InteropServices.Marshal.Copy(bufferS8.ptr, buffer, 0, (int)bufferS8.size);
             }
 
             return st;
