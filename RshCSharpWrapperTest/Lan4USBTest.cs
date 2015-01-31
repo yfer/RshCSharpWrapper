@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RshCSharpWrapper.Device;
 using RshCSharpWrapper;
@@ -17,21 +18,56 @@ namespace RshCSharpWrapperTest
         const uint BSIZE = 1048576;
         //Частота дискретизации. 
         const double SAMPLE_FREQ = 1.0e+8;
-        
+
+
+
+        /// <summary>
+        /// Проваливается, возвращается что-то неверное(
+        /// </summary>
         [TestMethod]
-        public void GetTextParameters()
+        public void GetADCList()
+        {
+            string test;
+            var st = Device.RshGetRegisteredDeviceName(1, out test);
+            Assert.AreEqual(st, API.SUCCESS);
+        }
+
+        [TestMethod]
+        public void GetGainList()
         {
             using (var device = new Device(BOARD_NAME))
             {
-                string res = "";
-                foreach(var v in GETHelper.GetModes( x => x.Type == typeof(S8P) || x.Type == typeof(U16P) ) )
+                var list = device.Get(GET.DEVICE_GAIN_LIST);
+            }
+        }
+
+        [TestMethod]
+        public void GetParameters()
+        {
+            using (var device = new Device(BOARD_NAME))
+            {                
+                var types = new List<Type>
                 {
-                    API? api = API.SUCCESS;
-                    res += v + ":" + device.Get(v, ref api) + "   API:" + api + "\n";
+                    typeof(S8P),
+                    typeof(U16P),
+                    typeof(U32),
+                    typeof(U64),
+                    typeof(RshCSharpWrapper.Types.Double),
+                };
+                var res = new Dictionary<Type, string>();
+                foreach (var type in types)
+                {
+                    res.Add(type,"");
+                    foreach (var v in GETHelper.GetModes(x => x.Type == type && x.Input == false))
+                    {
+                        API? api = API.SUCCESS;
+                        res[type] += v + ":" + device.Get(v, ref api) + "   API:" + api + "\n";
+                    }                    
                 }                
                 // Смотрите переменную res, в ней содержится список текстовых данных отданных платой.
             }
         }
+
         [TestMethod]
         public void IsCapable()
         {

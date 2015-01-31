@@ -7,11 +7,12 @@ using System.Text;
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal class Double
+    internal class Double : IReturn
     {
         private Names type = Names.Double; // data code
         public System.Double data;
-        public dynamic ret()
+    
+        public dynamic ReturnValue()
         {
             return data;
         }

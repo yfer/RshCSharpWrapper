@@ -6,6 +6,9 @@ using System.Text;
 
 namespace RshCSharpWrapper.Types
 {
+    /// <summary>
+    /// Unsigned Int 32
+    /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class U32 : IReturn
     {
