@@ -15,6 +15,12 @@ namespace RshCSharpWrapper
 
         #region Allocate & Free memory
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern uint UniDriverFreeBuffer(IntPtr uRshBuffer);
+
+        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern uint UniDriverAllocateBuffer(IntPtr uRshBuffer, uint desiredBufferSize);
+
+        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint UniDriverFreeBuffer(ref Types.BufferS8 uRshBuffer);
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
@@ -110,6 +116,10 @@ namespace RshCSharpWrapper
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint UniDriverGet(IntPtr deviceHandle, uint getMode, IntPtr value);
+
+        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getMode, IntPtr value);
+
 
         #region GetData
 
