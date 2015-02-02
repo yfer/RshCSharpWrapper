@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RshCSharpWrapper.Device
+﻿namespace RshCSharpWrapper.Device
 {
     public class InitGSPF
     {
@@ -52,15 +47,15 @@ namespace RshCSharpWrapper.Device
         }
         public void SetStartType(params StartTypeBit[] array)
         {
-            this.startType = 0;
+            startType = 0;
             foreach (StartTypeBit elem in array)
-                this.startType |= (uint)elem;
+                startType |= (uint)elem;
         }
         public void SetControl(params ControlBit[] array)
         {
-            this.control = 0;
+            control = 0;
             foreach (ControlBit elem in array)
-                this.control |= (uint)elem;
+                control |= (uint)elem;
         }
     };
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace RshCSharpWrapper.Types
 {
@@ -19,9 +16,9 @@ namespace RshCSharpWrapper.Types
         {
             typeName = Names.BufferU16;
             this.size = size;
-            this.psize = 0;
-            this.ptr = IntPtr.Zero;
-            this.id = 0;
+            psize = 0;
+            ptr = IntPtr.Zero;
+            id = 0;
         }
     };
 }

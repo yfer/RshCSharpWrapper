@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RshCSharpWrapper.Device
+﻿namespace RshCSharpWrapper.Device
 {
     public class InitDMA : InitADC
     {
@@ -25,15 +20,15 @@ namespace RshCSharpWrapper.Device
         };
         public void SetControl(params ControlBit[] array)
         {
-            this.control = 0;
+            control = 0;
             foreach (ControlBit elem in array)
-                this.control |= (uint)elem;
+                control |= (uint)elem;
         }
         public void SetDmaMode(params DmaModeBit[] array)
         {
-            this.dmaMode = 0;
+            dmaMode = 0;
             foreach (DmaModeBit elem in array)
-                this.dmaMode |= (uint)elem;
+                dmaMode |= (uint)elem;
         }
         public InitDMA()
         {

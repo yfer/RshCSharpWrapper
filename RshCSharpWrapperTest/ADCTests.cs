@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Policy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RshCSharpWrapper.Device;
 using RshCSharpWrapper;
-using System.Reflection;
 using RshCSharpWrapper.Types;
+using Channel = RshCSharpWrapper.Device.Channel;
+using Double = RshCSharpWrapper.Types.Double;
+using InitMemory = RshCSharpWrapper.Device.InitMemory;
 
 namespace RshCSharpWrapperTest
 {
@@ -60,7 +61,7 @@ namespace RshCSharpWrapperTest
                         typeof(U16P),
                         typeof(U32),
                         typeof(U64),
-                        typeof(RshCSharpWrapper.Types.Double),
+                        typeof(Double),
                         typeof(BufferU32)
                     };
                     var res = new Dictionary<Type, string>();
@@ -121,21 +122,21 @@ namespace RshCSharpWrapperTest
                     device.Connect(1);
                 
                     //Структура для инициализации параметров работы устройства.  
-                    var p = new RshCSharpWrapper.Device.InitMemory();
+                    var p = new InitMemory();
                     //Запуск сбора данных программный. 
-                    p.startType = (uint)RshCSharpWrapper.Device.InitMemory.StartTypeBit.Program;
+                    p.startType = (uint)InitADC.StartTypeBit.Program;
                     //Размер внутреннего блока данных, по готовности которого произойдёт прерывание.
                     p.bufferSize = BSIZE;
                     //Частота дискретизации.
                     p.frequency = SAMPLE_FREQ;
 
                     //Сделаем 0-ой канал активным.
-                    p.channels[0].control = (uint)RshCSharpWrapper.Device.Channel.ControlBit.Used;
+                    p.channels[0].control = (uint)Channel.ControlBit.Used;
                     //Зададим коэффициент усиления для 0-го канала.
                     p.channels[0].gain = 10;
 
                     //Сделаем 0-ой канал активным.
-                    p.channels[1].control = (uint)RshCSharpWrapper.Device.Channel.ControlBit.Used;
+                    p.channels[1].control = (uint)Channel.ControlBit.Used;
                     //Зададим коэффициент усиления для 0-го канала.
                     p.channels[1].gain = 10;
 
@@ -149,7 +150,7 @@ namespace RshCSharpWrapperTest
                         serNum = device.Get(GET.DEVICE_SERIAL_NUMBER);                
 
                     // Время ожидания(в миллисекундах) до наступления прерывания. Прерывание произойдет при полном заполнении буфера. 
-                    RshCSharpWrapper.Types.U32 waitTime = new RshCSharpWrapper.Types.U32() { data = 100000 };
+                    U32 waitTime = new U32() { data = 100000 };
                 
                     device.Start(); // Запускаем плату на сбор буфера.
 

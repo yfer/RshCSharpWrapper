@@ -1,23 +1,19 @@
 ﻿using RshCSharpWrapper.Types;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace RshCSharpWrapper.Device
 {
     public class Device : IDisposable
     {
         private IntPtr deviceHandle;
-        private Types.BufferS8 bufferS8;
-        private Types.BufferS16 bufferS16;
-        private Types.BufferU16 bufferU16;
-        private Types.BufferS32 bufferS32;
-        private Types.BufferU32 bufferU32;
-        private Types.BufferDouble bufferDouble;
+        private BufferS8 bufferS8;
+        private BufferS16 bufferS16;
+        private BufferU16 bufferU16;
+        private BufferS32 bufferS32;
+        private BufferU32 bufferU32;
+        private BufferDouble bufferDouble;
 
         private short[] tmpBufferShort = new short[1]; // буфер используется в GetData для копирования данных типа unsigned
         private int[] tmpBufferInt = new int[1];
@@ -27,12 +23,12 @@ namespace RshCSharpWrapper.Device
         {
             deviceHandle = IntPtr.Zero;
 
-            bufferS8 = new Types.BufferS8(0);
-            bufferS16 = new Types.BufferS16(0);
-            bufferU16 = new Types.BufferU16(0);
-            bufferS32 = new Types.BufferS32(0);
-            bufferU32 = new Types.BufferU32();
-            bufferDouble = new Types.BufferDouble(0);
+            bufferS8 = new BufferS8(0);
+            bufferS16 = new BufferS16(0);
+            bufferU16 = new BufferU16(0);
+            bufferS32 = new BufferS32(0);
+            bufferU32 = new BufferU32();
+            bufferDouble = new BufferDouble(0);
         }
         public Device(string deviceName):this()
         {
