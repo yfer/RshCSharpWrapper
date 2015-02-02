@@ -72,6 +72,7 @@
     <Compile Include="CAPS.cs" />
     <Compile Include="GET.cs" />
     <Compile Include="RshDeviceException.cs" />
+    <Compile Include="Types\IBuffer.cs" />
     <Compile Include="Types\IReturn.cs" />
     <Compile Include="Types\Names.cs" />
     <Compile Include="Types\BoardPortInfo.cs" />
