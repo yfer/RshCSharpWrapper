@@ -25,7 +25,12 @@ namespace RshCSharpWrapper
 
         #region Allocate & Free memory
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(IntPtr uRshBuffer);
+        private static extern uint UniDriverFreeBuffer(IntPtr uRshBuffer);
+
+        public static API FreeBuffer(IntPtr uRshBuffer)
+        {
+            return ToAPI(UniDriverFreeBuffer(uRshBuffer));
+        }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverAllocateBuffer(IntPtr uRshBuffer, uint desiredBufferSize);

@@ -704,16 +704,17 @@ namespace RshCSharpWrapper.Device
             if (tmp is IBuffer)
                 api = Connector.AllocateBuffer(unmanagedAddr, 32);
             if (api == API.SUCCESS)
-                api = Connector.Get(deviceHandle, mode, unmanagedAddr);
+                api = Connector.Get(deviceHandle, mode, unmanagedAddr);            
             tmp = Marshal.PtrToStructure(unmanagedAddr, mode_attr.Type);
+            var ret = tmp.ReturnValue();
+            if (tmp is IBuffer)
+                Connector.FreeBuffer(unmanagedAddr);
             Marshal.FreeHGlobal(unmanagedAddr);
             unmanagedAddr = IntPtr.Zero;
 
             if (api != API.SUCCESS)
                 throw new RshDeviceException(api);
-
-            var ret = tmp.ReturnValue();
-
+            
             return ret;
             //Что возвращаем?
             //switch (mode_attr.Name)
@@ -793,7 +794,7 @@ namespace RshCSharpWrapper.Device
                 }
                 catch (RshDeviceException ex)
                 {
-                    // //We only need this type of exception, else rethrow;
+                    //We only need this type of exception, else rethrow;
                     if (ex.Api == API.REGISTRY_KEYCANTOPEN)
                         next = false; 
                     else

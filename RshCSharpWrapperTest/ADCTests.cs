@@ -10,7 +10,7 @@ using RshCSharpWrapper.Types;
 namespace RshCSharpWrapperTest
 {
     [TestClass]
-    public class Lan4USBTest
+    public class ADCTests
     {
         //TODO: Когда прогоняете тесты, убедитесь что ваша плата может работать при указанных ниже параметрах.
         
@@ -83,7 +83,7 @@ namespace RshCSharpWrapperTest
                         
                         }                    
                     }                
-                    // Смотрите переменную res, в ней содержится список текстовых данных отданных платой.
+                    // Смотрите переменную res, в ней содержится список данных отданных платой.
                 }
         }
 

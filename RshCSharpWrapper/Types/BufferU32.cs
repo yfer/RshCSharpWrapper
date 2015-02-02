@@ -22,7 +22,7 @@ namespace RshCSharpWrapper.Types
         public dynamic ReturnValue()
         {
             var tmpBufferInt = new int[(int)size];
-            System.Runtime.InteropServices.Marshal.Copy(ptr, tmpBufferInt, 0, (int)size);
+            Marshal.Copy(ptr, tmpBufferInt, 0, (int)size);
             return tmpBufferInt;
         }
     };
