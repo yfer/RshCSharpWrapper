@@ -92,10 +92,10 @@ namespace RshCSharpWrapperTest
         public void GetErrorTexts()
         {
             string str = "";
-            foreach (var api in Enum.GetNames(typeof(API)))
+            foreach (API api in Enum.GetValues(typeof(API)))
             {
-                str += api + ":" + Connector.GetError((API)Enum.Parse(typeof(API), api), LANGUAGE.ENGLISH) + "\n";
-                str += api + ":" + Connector.GetError((API)Enum.Parse(typeof(API), api), LANGUAGE.RUSSIAN) + "\n";
+                str += api + ":" + Connector.GetError(api, LANGUAGE.ENGLISH) + "\n";
+                str += api + ":" + Connector.GetError(api, LANGUAGE.RUSSIAN) + "\n";
             }            
         }
 
@@ -106,8 +106,8 @@ namespace RshCSharpWrapperTest
                 using (var device = new Device(deviceName))
                 {
                     string res = "";
-                    foreach (var cap in Enum.GetNames(typeof(CAPS)))
-                        res += cap + ":" + device.IsCapable((CAPS)Enum.Parse(typeof(CAPS), cap)) + "\n";
+                    foreach (CAPS cap in Enum.GetValues(typeof(CAPS)))
+                        res += cap + ":" + device.IsCapable(cap) + "\n";
                     //Смотрите переменную res, в ней содержится список всего того что может ваша плата.
                 }
         }
