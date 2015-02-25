@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RshCSharpWrapper.Device
+﻿namespace RshCSharpWrapper.Device
 {
     public enum CONNECT_MODE
     {

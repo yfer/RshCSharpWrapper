@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RshCSharpWrapper.Device
+﻿namespace RshCSharpWrapper.Device
 {
     public class InitADC
     {
@@ -36,7 +31,7 @@ namespace RshCSharpWrapper.Device
             frequency = 0;
             bufferSize = 0;
             channels = new Channel[32];
-            for (int i = 0; i < 32; i++)
+            for (var i = 0; i < 32; i++)
                 channels[i] = new Channel();
 
             threshold = 0.0;
@@ -45,7 +40,7 @@ namespace RshCSharpWrapper.Device
         public void SetStartType(params StartTypeBit[] array)
         {
             this.startType = 0;
-            foreach (StartTypeBit elem in array)
+            foreach (var elem in array)
                 this.startType |= (uint)elem;
         }
     }

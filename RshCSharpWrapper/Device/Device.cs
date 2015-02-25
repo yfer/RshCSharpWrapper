@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RshCSharpWrapper.Device
 {
@@ -131,7 +128,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            Types.InitDMA iS = new Types.InitDMA(0); // для вызова своего конструктора
+            var iS = new Types.InitDMA(0); // для вызова своего конструктора
 
             iS.bufferSize = initStructure.bufferSize;
             iS.control = initStructure.control;
@@ -142,7 +139,7 @@ namespace RshCSharpWrapper.Device
             iS.threshold = initStructure.threshold;
             iS.controlSynchro = initStructure.controlSynchro;
 
-            for (int i = 0; i < initStructure.channels.Length; i++)
+            for (var i = 0; i < initStructure.channels.Length; i++)
             {
                 iS.channels[i].control = initStructure.channels[i].control;
                 iS.channels[i].gain = initStructure.channels[i].gain;
@@ -160,7 +157,7 @@ namespace RshCSharpWrapper.Device
                 else
                     return API.UNDEFINED;
             }
-            API st = (API)(operationStatus & MASK_RSH_ERROR);
+            var st = (API)(operationStatus & MASK_RSH_ERROR);
 
             if (st == API.SUCCESS)
             {
@@ -173,7 +170,7 @@ namespace RshCSharpWrapper.Device
                 initStructure.threshold = iS.threshold;
                 initStructure.controlSynchro = iS.controlSynchro;
 
-                for (int i = 0; i < initStructure.channels.Length; i++)
+                for (var i = 0; i < initStructure.channels.Length; i++)
                 {
                     initStructure.channels[i].control = iS.channels[i].control;
                     initStructure.channels[i].gain = iS.channels[i].gain;
@@ -187,7 +184,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            Types.InitMemory iS = new Types.InitMemory(0);
+            var iS = new Types.InitMemory(0);
 
             iS.bufferSize = initStructure.bufferSize;
             iS.control = initStructure.control;
@@ -203,7 +200,7 @@ namespace RshCSharpWrapper.Device
             iS.channelSynchro.gain = initStructure.channelSynchro.gain;
 
 
-            for (int i = 0; i < initStructure.channels.Length; i++)
+            for (var i = 0; i < initStructure.channels.Length; i++)
             {
                 iS.channels[i].control = initStructure.channels[i].control;
                 iS.channels[i].gain = initStructure.channels[i].gain;
@@ -222,7 +219,7 @@ namespace RshCSharpWrapper.Device
                 else
                     return API.UNDEFINED;
             }
-            API st = (API)(operationStatus & MASK_RSH_ERROR);
+            var st = (API)(operationStatus & MASK_RSH_ERROR);
 
             if (st == API.SUCCESS)
             {
@@ -239,7 +236,7 @@ namespace RshCSharpWrapper.Device
                 initStructure.channelSynchro.control = iS.channelSynchro.control;
                 initStructure.channelSynchro.gain = iS.channelSynchro.gain;
 
-                for (int i = 0; i < initStructure.channels.Length; i++)
+                for (var i = 0; i < initStructure.channels.Length; i++)
                 {
                     initStructure.channels[i].control = iS.channels[i].control;
                     initStructure.channels[i].gain = iS.channels[i].gain;
@@ -253,7 +250,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            Types.InitGSPF iS = new Types.InitGSPF(0);
+            var iS = new Types.InitGSPF(0);
 
             iS.attenuator = (uint)initStructure.attenuator;
             iS.control = initStructure.control;
@@ -272,7 +269,7 @@ namespace RshCSharpWrapper.Device
                 else
                     return API.UNDEFINED;
             }
-            API st = (API)(operationStatus & MASK_RSH_ERROR);
+            var st = (API)(operationStatus & MASK_RSH_ERROR);
 
             if (st == API.SUCCESS)
             {
@@ -288,7 +285,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            Types.InitVoltmeter iS = new Types.InitVoltmeter(0);
+            var iS = new Types.InitVoltmeter(0);
 
             iS.bufferSize = initStructure.bufferSize;
             iS.control = initStructure.control;
@@ -307,7 +304,7 @@ namespace RshCSharpWrapper.Device
                 else
                     return API.UNDEFINED;
             }
-            API st = (API)(operationStatus & MASK_RSH_ERROR);
+            var st = (API)(operationStatus & MASK_RSH_ERROR);
 
             if (st == API.SUCCESS)
             {
@@ -323,7 +320,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            Types.InitPort iS = new Types.InitPort(0);
+            var iS = new Types.InitPort(0);
 
             iS.operationType = (uint)initStructure.operationType;
             iS.portAddress = initStructure.portAddress;
@@ -341,7 +338,7 @@ namespace RshCSharpWrapper.Device
                 else
                     return API.UNDEFINED;
             }
-            API st = (API)(operationStatus & MASK_RSH_ERROR);
+            var st = (API)(operationStatus & MASK_RSH_ERROR);
 
             if (st == API.SUCCESS)
             {
@@ -357,7 +354,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            Types.InitDAC iS = new Types.InitDAC(0);
+            var iS = new Types.InitDAC(0);
 
             iS.id = initStructure.id;
             iS.voltage = initStructure.voltage;
@@ -374,7 +371,7 @@ namespace RshCSharpWrapper.Device
                 else
                     return API.UNDEFINED;
             }
-            API st = (API)(operationStatus & MASK_RSH_ERROR);
+            var st = (API)(operationStatus & MASK_RSH_ERROR);
 
             if (st == API.SUCCESS)
             {
@@ -425,7 +422,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
             try
             {
@@ -468,7 +465,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
 
             try
@@ -512,7 +509,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
 
             try
@@ -558,7 +555,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
 
             try
@@ -602,7 +599,7 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
 
             try
@@ -645,9 +642,9 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
-            Types.S32 tmp = new Types.S32(0);
+            var tmp = new Types.S32(0);
             tmp.data = 0;
             try
             {
@@ -670,9 +667,9 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
-            Types.Double tmp = new Types.Double(0);
+            var tmp = new Types.Double(0);
             tmp.data = value;
             try
             {
@@ -696,9 +693,9 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
-            Types.U32 tmp = new Types.U32(0);
+            var tmp = new Types.U32(0);
             tmp.data = value;
             try
             {
@@ -723,9 +720,9 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
-            Types.S32 tmp = new Types.S32(0);
+            var tmp = new Types.S32(0);
             tmp.data = value;
             try
             {
@@ -753,11 +750,11 @@ namespace RshCSharpWrapper.Device
 
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
             if (mode.ToString().Contains("UTF16"))
             {
-                Types.U16P tmp = new Types.U16P(0);
+                var tmp = new Types.U16P(0);
                 try
                 {
                     operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
@@ -775,7 +772,7 @@ namespace RshCSharpWrapper.Device
             }
             else
             {
-                Types.S8P tmp = new Types.S8P(0);
+                var tmp = new Types.S8P(0);
                 try
                 {
                     operationStatus = Connector.UniDriverGet(deviceHandle, (uint)mode, ref tmp);
@@ -799,9 +796,9 @@ namespace RshCSharpWrapper.Device
         {
             if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
-            Types.BoardPortInfo tmp = new Types.BoardPortInfo(0);
+            var tmp = new Types.BoardPortInfo(0);
 
             try
             {
@@ -822,12 +819,12 @@ namespace RshCSharpWrapper.Device
                 if (tmp.totalConfs != 0)
                 {
                     value.confs = new PortInfo[tmp.totalConfs];
-                    for (int i = 0; i < value.confs.Length; i++)
+                    for (var i = 0; i < value.confs.Length; i++)
                     {
                         value.confs[i] = new PortInfo();
                         value.confs[i].address = tmp.confs[i].address;
                         value.confs[i].bitSize = tmp.confs[i].bitSize;
-                        string str = System.Text.Encoding.UTF8.GetString(tmp.confs[i].name);
+                        var str = System.Text.Encoding.UTF8.GetString(tmp.confs[i].name);
                         value.confs[i].name = str.Substring(0, str.IndexOf('\0'));
                     }
                 }
@@ -835,12 +832,12 @@ namespace RshCSharpWrapper.Device
                 if (tmp.totalPorts != 0)
                 {
                     value.ports = new PortInfo[tmp.totalPorts];
-                    for (int i = 0; i < value.ports.Length; i++)
+                    for (var i = 0; i < value.ports.Length; i++)
                     {
                         value.ports[i] = new PortInfo();
                         value.ports[i].address = tmp.ports[i].address;
                         value.ports[i].bitSize = tmp.ports[i].bitSize;
-                        string str = System.Text.Encoding.UTF8.GetString(tmp.ports[i].name);
+                        var str = System.Text.Encoding.UTF8.GetString(tmp.ports[i].name);
                         value.ports[i].name = str.Substring(0, str.IndexOf('\0'));
                     }
                 }
@@ -851,9 +848,9 @@ namespace RshCSharpWrapper.Device
         {
             value = "";
             uint os;
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
-            Types.U16P tmp = new Types.U16P(0);
+            var tmp = new Types.U16P(0);
             try
             {
                 os = Connector.UniDriverGetError((uint)errorCode, ref tmp, (uint)language);
@@ -877,9 +874,9 @@ namespace RshCSharpWrapper.Device
         {
             value = "";
             uint os;
-            API st = API.SUCCESS;
+            var st = API.SUCCESS;
 
-            Types.U16P tmp = new Types.U16P(0);
+            var tmp = new Types.U16P(0);
             try
             {
                 os = Connector.UniDriverGetRegisteredDeviceName(index, ref tmp);

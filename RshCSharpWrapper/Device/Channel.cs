@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RshCSharpWrapper.Device
+﻿namespace RshCSharpWrapper.Device
 {
     public class Channel
     {
@@ -35,7 +30,7 @@ namespace RshCSharpWrapper.Device
         public void SetControl(params ControlBit[] array)
         {
             this.control = 0;
-            foreach (ControlBit elem in array)
+            foreach (var elem in array)
                 this.control |= (uint)elem;
 
         }
