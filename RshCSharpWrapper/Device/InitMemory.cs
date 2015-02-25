@@ -1,4 +1,9 @@
-﻿namespace RshCSharpWrapper.Device
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace RshCSharpWrapper.Device
 {
     public class InitMemory : InitADC // former ADCParametersMEMORY2
     {
@@ -20,13 +25,13 @@
         public void SetControlSynchro(params ControlSynchroBit[] array)
         {
             this.controlSynchro = 0;
-            foreach (var elem in array)
+            foreach (ControlSynchroBit elem in array)
                 this.controlSynchro |= (uint)elem;
         }
         public void SetControl(params ControlBit[] array)
         {
             this.control = 0;
-            foreach (var elem in array)
+            foreach (ControlBit elem in array)
                 this.control |= (uint)elem;
         }
         public InitMemory()

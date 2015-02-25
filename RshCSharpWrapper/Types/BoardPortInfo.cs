@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace RshCSharpWrapper.Types
 {
@@ -18,7 +21,7 @@ namespace RshCSharpWrapper.Types
             typeName = Names.BoardPortInfo;
             confs = new PortInfo[32];
             ports = new PortInfo[32];
-            for (var i = 0; i < 32; i++)
+            for (int i = 0; i < 32; i++)
             {
                 confs[i] = new PortInfo(0);
                 ports[i] = new PortInfo(0);

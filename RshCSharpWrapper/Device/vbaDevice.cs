@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace RshCSharpWrapper.Device
 {
@@ -30,7 +33,7 @@ namespace RshCSharpWrapper.Device
             */
             //===================== ПРОВЕРКА СОВМЕСТИМОСТИ =================================  
 
-            var caps = (uint)CAPS.SOFT_GATHERING_IS_AVAILABLE;
+            uint caps = (uint)CAPS.SOFT_GATHERING_IS_AVAILABLE;
             st = device.Get(GET.DEVICE_IS_CAPABLE, ref caps); // Проверим, поддерживает ли плата функцию сбора данных сигнала.
             if (st != API.SUCCESS) return st;//return SayGoodBye(st);
 
@@ -53,16 +56,16 @@ namespace RshCSharpWrapper.Device
         {
             API st;
 
-            var caps = (uint)CAPS.SOFT_INIT_DMA;
+            uint caps = (uint)CAPS.SOFT_INIT_DMA;
             st = device.Get(GET.DEVICE_IS_CAPABLE, ref caps); // Проверим, поддерживается ли структура DMA.
             if (st == API.SUCCESS)
             {
-                var p = new InitDMA(); // Структура для инициализации параметров работы платы.  
+                InitDMA p = new InitDMA(); // Структура для инициализации параметров работы платы.  
                 p.startType = (uint)InitDMA.StartTypeBit.Program; // Запуск платы по внутреннему таймеру. 
                 p.bufferSize = (uint)bufferSize; // Размер внутреннего блока данных, по готовности которого произойдёт прерывание.
                 p.frequency = frequency; // Частота дискретизации.
 
-                foreach (var ch in p.channels)
+                foreach (Channel ch in p.channels)
                 {
                     ch.control = (uint)Channel.ControlBit.Used; // Сделаем 0-ой канал активным.
                     ch.gain = 1; // Зададим коэффициент усиления для 0-го канала.
@@ -78,12 +81,12 @@ namespace RshCSharpWrapper.Device
             st = device.Get(GET.DEVICE_IS_CAPABLE, ref caps); // Проверим, поддерживается ли структура DMA.
             if (st == API.SUCCESS)
             {
-                var p = new InitMemory(); // Структура для инициализации параметров работы платы.  
+                InitMemory p = new InitMemory(); // Структура для инициализации параметров работы платы.  
                 p.startType = (uint)InitMemory.StartTypeBit.Program; // Запуск платы по внутреннему таймеру. 
                 p.bufferSize = (uint)bufferSize; // Размер внутреннего блока данных, по готовности которого произойдёт прерывание.
                 p.frequency = frequency; // Частота дискретизации.
 
-                foreach (var ch in p.channels)
+                foreach (Channel ch in p.channels)
                 {
                     ch.control = (uint)Channel.ControlBit.Used; // Сделаем 0-ой канал активным.
                     ch.gain = 1; // Зададим коэффициент усиления для 0-го канала.

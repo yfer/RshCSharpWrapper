@@ -1,4 +1,9 @@
-﻿namespace RshCSharpWrapper.Device
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace RshCSharpWrapper.Device
 {
     public class SynchroChannel  // настройка канала внешней синхронизации
     {
@@ -19,7 +24,7 @@
         public void SetControl(params ControlBit[] array)
         {
             this.control = 0;
-            foreach (var elem in array)
+            foreach (ControlBit elem in array)
                 this.control |= (uint)elem;
         }
     }

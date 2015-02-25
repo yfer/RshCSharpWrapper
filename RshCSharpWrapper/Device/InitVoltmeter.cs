@@ -1,4 +1,9 @@
-﻿namespace RshCSharpWrapper.Device
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace RshCSharpWrapper.Device
 {
     public class InitVoltmeter
     {
@@ -30,7 +35,7 @@
         public void SetStartType(params StartTypeBit[] array)
         {
             this.startType = 0;
-            foreach (var elem in array)
+            foreach (StartTypeBit elem in array)
                 this.startType |= (uint)elem;
         }
     };
