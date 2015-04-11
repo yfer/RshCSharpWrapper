@@ -838,6 +838,8 @@ namespace RshCSharpWrapper
         public bool Input = false;
         public ModeAttribute(Type type)
         {
+            if(type==null)
+                throw new ArgumentNullException("type");
             Type = type;
         }
     }

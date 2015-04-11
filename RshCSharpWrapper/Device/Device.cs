@@ -72,9 +72,14 @@ namespace RshCSharpWrapper.Device
         }
         #endregion
        
-        public void Connect(uint idNumber, CONNECT_MODE mode = CONNECT_MODE.BASE)
+        /// <summary>
+        /// Подключиться к устройству
+        /// </summary>
+        /// <param name="id">Базовый адрес или серийный номер, выбирается режимом во втором параметре.</param>
+        /// <param name="mode">Режим подключения, по базовому адресу(по умолчанию) или по серийному номеру.</param>
+        public void Connect(uint id = 1, CONNECT_MODE mode = CONNECT_MODE.BASE)
         {            
-            Connector.Connect(deviceHandle, idNumber, (uint)mode);           
+            Connector.Connect(deviceHandle, id, (uint)mode);           
         }
 
         //public API Init(InitDMA initStructure, INIT_MODE mode = INIT_MODE.INIT)
@@ -676,32 +681,32 @@ namespace RshCSharpWrapper.Device
         /// <returns>Возвращает данные в зависимости от выбранного режима</returns>
         public dynamic Get(GET mode, object param = null, bool returnAPIResult = false)
         {
-            API api = API.SUCCESS;
+            var api = API.SUCCESS;
             if (deviceHandle == IntPtr.Zero)
                 throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
 
             //Выясняем параметры работы выбранного режима
-            var mode_attr = (ModeAttribute)Attribute.GetCustomAttribute(
-                typeof(GET).GetField(Enum.GetName(typeof(GET), mode)),
+            var modeAttr = (ModeAttribute)Attribute.GetCustomAttribute(
+                mode.GetType().GetField(mode.ToString()),
                 typeof(ModeAttribute)
                 );
 
-            if (!mode_attr.Input && param != null)
-                throw new ArgumentNullException("no param must be provided for " + mode + " mode");
-            if (mode_attr.Input && param == null)
-                throw new ArgumentNullException("param must be provided for " + mode + " mode");
+            if (modeAttr == null)
+                throw new InvalidOperationException("We don't have information on this mode, communicate with developer to solve.");
+            if (modeAttr.Input == (param == null))
+                throw new InvalidOperationException("Does this mode wait 'param'? :" + modeAttr.Input + " but param is " + param);
             
-            //Переменная для передачи в RshUniDriver
-            dynamic tmp = mode_attr.Input ? param : mode_attr.Type.GetConstructor(new Type[] { }).Invoke(new object[] { });
+            //Для передачи в RshUniDriver, в соответствии с типом данных с которым работает данная настройка.
+            dynamic tmp = Activator.CreateInstance(modeAttr.Type);
 
             //Обращение к RshUniDriver и возвращение результата из неуправляемой памят
-            IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
+            var unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
             Marshal.StructureToPtr(tmp, unmanagedAddr, true);
             if (tmp is IBuffer)
                 api = Connector.AllocateBuffer(unmanagedAddr, 32);
             if (api == API.SUCCESS)
                 api = Connector.Get(deviceHandle, mode, unmanagedAddr);            
-            tmp = Marshal.PtrToStructure(unmanagedAddr, mode_attr.Type);
+            tmp = Marshal.PtrToStructure(unmanagedAddr, modeAttr.Type);
             var ret = tmp.ReturnValue();
             if (tmp is IBuffer)
                 Connector.FreeBuffer(unmanagedAddr);
@@ -765,7 +770,7 @@ namespace RshCSharpWrapper.Device
         /// <returns>Поддерживается ли возможность</returns>
         public bool IsCapable(CAPS caps)
         {
-            var tmp = new U32() { data = (uint)caps };
+            var tmp = new U32 { data = (uint)caps };
             try
             {
                 Get(GET.DEVICE_IS_CAPABLE, tmp);
@@ -779,25 +784,7 @@ namespace RshCSharpWrapper.Device
                 
         public static List<string> RshGetRegisteredDeviceNames()
         {
-            var res=new List<string>();
-            uint index = 0;
-            var next = true;
-            while (next)
-            {
-                try
-                {
-                    res.Add(Connector.GetRegisteredDeviceName(index++));
-                }
-                catch (RshDeviceException ex)
-                {
-                    //We only need this type of exception, else rethrow;
-                    if (ex.Api == API.REGISTRY_KEYCANTOPEN)
-                        next = false; 
-                    else
-                        throw;                    
-                }
-            }
-            return res;
+            return Connector.GetRegisteredDeviceNames();
         }
     };
 }

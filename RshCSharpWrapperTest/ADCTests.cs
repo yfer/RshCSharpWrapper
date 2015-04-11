@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RshCSharpWrapper.Device;
 using RshCSharpWrapper;
@@ -82,7 +83,7 @@ namespace RshCSharpWrapperTest
                                 res[type] += v + ":" + "null" + "   API:" + ex.Api + "," + ex.Message + "\n";
                             } 
                         
-                        }                    
+                        }              
                     }                
                     // Смотрите переменную res, в ней содержится список данных отданных платой.
                 }
@@ -116,10 +117,10 @@ namespace RshCSharpWrapperTest
         public void GetDataFromDriver()
         {
             foreach (var deviceName in Device.RshGetRegisteredDeviceNames())
+                //if(deviceName=="LAN4USB")//!?
                 using (var device = new Device(deviceName))
                 {
-                    //Подключаемся к устройству. Нумерация начинается с 1.
-                    device.Connect(1);
+                    device.Connect();
                 
                     //Структура для инициализации параметров работы устройства.  
                     var p = new InitMemory();
@@ -142,7 +143,7 @@ namespace RshCSharpWrapperTest
 
                     //Инициализация устройства (передача выбранных параметров сбора данных)
                     //После инициализации неправильные значения в структуре будут откорректированы.
-                    device.Init(p);
+                    var res = device.Init(p);
 
                     //=================== ИНФОРМАЦИЯ О ПРЕДСТОЯЩЕМ СБОРЕ ДАННЫХ ====================== 
                     uint 

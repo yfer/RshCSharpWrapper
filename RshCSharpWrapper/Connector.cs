@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using RshCSharpWrapper.Device;
@@ -295,7 +296,7 @@ namespace RshCSharpWrapper
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverGetRegisteredDeviceName(uint index, IntPtr ptr);
 
-        public static string GetRegisteredDeviceName(uint index)
+        private static string GetRegisteredDeviceName(uint index)
         {
             try
             {
@@ -309,7 +310,7 @@ namespace RshCSharpWrapper
 
                 if (api != API.SUCCESS)
                     throw new RshDeviceException(api);
-                return tmp.ReturnValue();                
+                return tmp.ReturnValue();
             }
             catch (Exception ex)
             {
@@ -318,6 +319,23 @@ namespace RshCSharpWrapper
                 throw;
             }
         }
+
+        public static List<string> GetRegisteredDeviceNames()
+        {
+            var res = new List<string>();
+            try
+            {
+                for (uint index = 0; ; index++)
+                    res.Add(GetRegisteredDeviceName(index));
+            }
+            catch (RshDeviceException ex)
+            {
+                //We only need this type of exception, it is sign of the end of list, else rethrow;
+                if (ex.Api != API.REGISTRY_KEYCANTOPEN) throw;
+            }
+            return res;
+        }
+
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverCloseDeviceHandle(IntPtr deviceHandle);
