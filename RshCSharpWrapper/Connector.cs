@@ -109,18 +109,9 @@ namespace RshCSharpWrapper
 
         public static void GetDeviceHandle(string deviceName, out IntPtr deviceHandle)
         {
-            try
-            {
-                var res = ToAPI(UniDriverGetDeviceHandle(deviceName, out deviceHandle));
-                if( res != API.SUCCESS )
-                    throw new RshDeviceException(res);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Unable to load DLL"))
-                    throw new RshDeviceException(API.UNIDRIVER_DLLWASNOTLOADED);
-                throw;
-            }
+            var res = ToAPI(UniDriverGetDeviceHandle(deviceName, out deviceHandle));
+            if( res != API.SUCCESS )
+                throw new RshDeviceException(res);
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
@@ -130,18 +121,9 @@ namespace RshCSharpWrapper
         {
             if (deviceHandle == IntPtr.Zero)
                 throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
-            try
-            {
-                var api = ToAPI(UniDriverConnect(deviceHandle, deviceIndex, mode));
-                if( api != API.SUCCESS )
-                    throw new RshDeviceException(api);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Unable to load DLL"))
-                    throw new RshDeviceException(API.UNIDRIVER_DLLWASNOTLOADED);
-                throw;
-            }
+            var api = ToAPI(UniDriverConnect(deviceHandle, deviceIndex, mode));
+            if( api != API.SUCCESS )
+                throw new RshDeviceException(api);
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
@@ -151,18 +133,9 @@ namespace RshCSharpWrapper
         {
             if (deviceHandle == IntPtr.Zero)
                 throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
-            try
-            {
-                var api = ToAPI( UniDriverStart(deviceHandle) );
-                if(api != API.SUCCESS)
-                    throw new RshDeviceException(api);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Unable to load DLL"))
-                    throw new RshDeviceException(API.UNIDRIVER_DLLWASNOTLOADED);
-                throw;
-            }
+            var api = ToAPI( UniDriverStart(deviceHandle) );
+            if(api != API.SUCCESS)
+                throw new RshDeviceException(api);
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
@@ -172,18 +145,9 @@ namespace RshCSharpWrapper
         {
             if (deviceHandle == IntPtr.Zero)
                 throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
-            try 
-            { 
-                var api = ToAPI(UniDriverStop(deviceHandle));
-                if (api != API.SUCCESS)
-                    throw new RshDeviceException(api);
-            }
-            catch(Exception ex)
-            {
-                if (ex.Message.Contains("Unable to load DLL"))
-                    throw new RshDeviceException(API.UNIDRIVER_DLLWASNOTLOADED);
-                throw;
-            }
+            var api = ToAPI(UniDriverStop(deviceHandle));
+            if (api != API.SUCCESS)
+                throw new RshDeviceException(api);
         }
 
         #region Init
@@ -261,27 +225,17 @@ namespace RshCSharpWrapper
 
         public static string GetError(API errorCode, LANGUAGE language)
         {
-            try
-            {
-                var tmp = new U16P();
-                IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
-                Marshal.StructureToPtr(tmp, unmanagedAddr, true);              
-                var api = ToAPI(UniDriverGetError((uint) errorCode, unmanagedAddr, (uint) language));
-                tmp = (U16P)Marshal.PtrToStructure(unmanagedAddr, typeof(U16P));
-                Marshal.FreeHGlobal(unmanagedAddr);
-                unmanagedAddr = IntPtr.Zero;
+            var tmp = new U16P();
+            IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
+            Marshal.StructureToPtr(tmp, unmanagedAddr, true);              
+            var api = ToAPI(UniDriverGetError((uint) errorCode, unmanagedAddr, (uint) language));
+            tmp = (U16P)Marshal.PtrToStructure(unmanagedAddr, typeof(U16P));
+            Marshal.FreeHGlobal(unmanagedAddr);
+            unmanagedAddr = IntPtr.Zero;
 
-                if (api != API.SUCCESS)
-                    throw new RshDeviceException(api);
-                return tmp.ReturnValue();                
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Unable to load DLL"))
-                    throw new RshDeviceException(API.UNIDRIVER_DLLWASNOTLOADED);
-                throw;
-            }
-           
+            if (api != API.SUCCESS)
+                throw new RshDeviceException(api);
+            return tmp.ReturnValue();                
         }
 
         public static string GetError(API errorCode)
@@ -298,26 +252,17 @@ namespace RshCSharpWrapper
 
         private static string GetRegisteredDeviceName(uint index)
         {
-            try
-            {
-                var tmp = new U16P();
-                IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
-                Marshal.StructureToPtr(tmp, unmanagedAddr, true);              
-                var api = ToAPI(UniDriverGetRegisteredDeviceName(index, unmanagedAddr));
-                tmp = (U16P)Marshal.PtrToStructure(unmanagedAddr, typeof(U16P));
-                Marshal.FreeHGlobal(unmanagedAddr);
-                unmanagedAddr = IntPtr.Zero;
+            var tmp = new U16P();
+            IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
+            Marshal.StructureToPtr(tmp, unmanagedAddr, true);              
+            var api = ToAPI(UniDriverGetRegisteredDeviceName(index, unmanagedAddr));
+            tmp = (U16P)Marshal.PtrToStructure(unmanagedAddr, typeof(U16P));
+            Marshal.FreeHGlobal(unmanagedAddr);
+            unmanagedAddr = IntPtr.Zero;
 
-                if (api != API.SUCCESS)
-                    throw new RshDeviceException(api);
-                return tmp.ReturnValue();
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Unable to load DLL"))
-                    throw new RshDeviceException(API.UNIDRIVER_DLLWASNOTLOADED);
-                throw;
-            }
+            if (api != API.SUCCESS)
+                throw new RshDeviceException(api);
+            return tmp.ReturnValue();
         }
 
         public static List<string> GetRegisteredDeviceNames()
@@ -342,18 +287,9 @@ namespace RshCSharpWrapper
 
         public static void CloseDeviceHandle(IntPtr deviceHandle)
         {
-            try
-            {
-                var res = ToAPI(UniDriverCloseDeviceHandle(deviceHandle));
-                if (res != API.SUCCESS)
-                    throw new RshDeviceException(res);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Unable to load DLL"))
-                    throw new RshDeviceException(API.UNIDRIVER_DLLWASNOTLOADED);
-                throw;
-            }
+            var res = ToAPI(UniDriverCloseDeviceHandle(deviceHandle));
+            if (res != API.SUCCESS)
+                throw new RshDeviceException(res);
         }
 
         #endregion
