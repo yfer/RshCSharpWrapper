@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal class U16P : IReturn
+    internal class U16P : IReturn, IString
     {
         private Names type = Names.U16P;
         public IntPtr data = IntPtr.Zero;

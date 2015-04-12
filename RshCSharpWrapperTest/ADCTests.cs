@@ -24,7 +24,7 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetADCList()
         {
-            var result = Device.RshGetRegisteredDeviceNames();            
+            var result = Device.RshGetRegisteredDeviceNames();
             Assert.IsFalse(result.Count == 0, "There is no boards installed on this machine.");
         }
 

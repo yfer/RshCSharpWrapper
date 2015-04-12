@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using RshCSharpWrapper.Device;
@@ -12,17 +13,29 @@ using InitPort = RshCSharpWrapper.Types.InitPort;
 using InitVoltmeter = RshCSharpWrapper.Types.InitVoltmeter;
 
 namespace RshCSharpWrapper
-{
+{    
     /// <summary>
     /// RshUniDriver native calls
     /// </summary>
-    internal class Connector
-    {        
-        private static API ToAPI(uint operationResult)
+    internal static class Connector
+    {
+        private static API ToAPI(this uint operationResult)
         {
             const uint MASK_RSH_ERROR = 0xffff0000;
 
             return (API)(operationResult & MASK_RSH_ERROR);;
+        }
+
+        public static void ThrowIfNotSuccess(this API api)
+        {
+            if ( api != API.SUCCESS )
+                throw new RshDeviceException(api);
+        }
+
+        private static void CheckIfDeviceHandleOk(this IntPtr deviceHandle)
+        {
+            if (deviceHandle == IntPtr.Zero)
+                throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
         }
 
         #region IRSHDevice functions
@@ -33,7 +46,7 @@ namespace RshCSharpWrapper
 
         public static API FreeBuffer(IntPtr uRshBuffer)
         {
-            return ToAPI(UniDriverFreeBuffer(uRshBuffer));
+            return UniDriverFreeBuffer(uRshBuffer).ToAPI();
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
@@ -41,7 +54,7 @@ namespace RshCSharpWrapper
 
         public static API AllocateBuffer(IntPtr uRshBuffer, uint desiredBufferSize)
         {
-            return ToAPI(UniDriverAllocateBuffer(uRshBuffer, desiredBufferSize));
+            return UniDriverAllocateBuffer(uRshBuffer, desiredBufferSize).ToAPI();
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
@@ -107,47 +120,36 @@ namespace RshCSharpWrapper
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverGetDeviceHandle(string deviceName, out IntPtr deviceHandle);
 
-        public static void GetDeviceHandle(string deviceName, out IntPtr deviceHandle)
+        public static API GetDeviceHandle(string deviceName, out IntPtr deviceHandle)
         {
-            var res = ToAPI(UniDriverGetDeviceHandle(deviceName, out deviceHandle));
-            if( res != API.SUCCESS )
-                throw new RshDeviceException(res);
+            return UniDriverGetDeviceHandle(deviceName, out deviceHandle).ToAPI();
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverConnect(IntPtr deviceHandle, uint deviceIndex, uint mode);
 
-        public static void Connect(IntPtr deviceHandle, uint deviceIndex, uint mode)
+        public static API Connect(IntPtr deviceHandle, uint deviceIndex, uint mode)
         {
-            if (deviceHandle == IntPtr.Zero)
-                throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
-            var api = ToAPI(UniDriverConnect(deviceHandle, deviceIndex, mode));
-            if( api != API.SUCCESS )
-                throw new RshDeviceException(api);
+            deviceHandle.CheckIfDeviceHandleOk();            
+            return UniDriverConnect(deviceHandle, deviceIndex, mode).ToAPI();
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverStart(IntPtr deviceHandle);
 
-        public static void Start(IntPtr deviceHandle)
+        public static API Start(IntPtr deviceHandle)
         {
-            if (deviceHandle == IntPtr.Zero)
-                throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
-            var api = ToAPI( UniDriverStart(deviceHandle) );
-            if(api != API.SUCCESS)
-                throw new RshDeviceException(api);
+            deviceHandle.CheckIfDeviceHandleOk();
+            return UniDriverStart(deviceHandle).ToAPI();
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverStop(IntPtr deviceHandle);
 
-        public static void Stop(IntPtr deviceHandle)
+        public static API Stop(IntPtr deviceHandle)
         {
-            if (deviceHandle == IntPtr.Zero)
-                throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
-            var api = ToAPI(UniDriverStop(deviceHandle));
-            if (api != API.SUCCESS)
-                throw new RshDeviceException(api);
+            deviceHandle.CheckIfDeviceHandleOk();
+            return UniDriverStop(deviceHandle).ToAPI();
         }
 
         #region Init
@@ -160,7 +162,7 @@ namespace RshCSharpWrapper
 
         public static API Init(IntPtr deviceHandle, uint initializationMode, ref InitMemory initStructure)
         {
-            return ToAPI(UniDriverInit(deviceHandle, initializationMode, ref initStructure));
+            return UniDriverInit(deviceHandle, initializationMode, ref initStructure).ToAPI();
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
@@ -182,7 +184,7 @@ namespace RshCSharpWrapper
 
         public static API Get(IntPtr deviceHandle, GET mode, IntPtr value)
         {
-            return ToAPI(UniDriverGet(deviceHandle, (uint) mode, value));
+            return UniDriverGet(deviceHandle, (uint) mode, value).ToAPI();
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
@@ -225,17 +227,7 @@ namespace RshCSharpWrapper
 
         public static string GetError(API errorCode, LANGUAGE language)
         {
-            var tmp = new U16P();
-            IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
-            Marshal.StructureToPtr(tmp, unmanagedAddr, true);              
-            var api = ToAPI(UniDriverGetError((uint) errorCode, unmanagedAddr, (uint) language));
-            tmp = (U16P)Marshal.PtrToStructure(unmanagedAddr, typeof(U16P));
-            Marshal.FreeHGlobal(unmanagedAddr);
-            unmanagedAddr = IntPtr.Zero;
-
-            if (api != API.SUCCESS)
-                throw new RshDeviceException(api);
-            return tmp.ReturnValue();                
+            return GetStringFromDriver<U16P>(intPtr => UniDriverGetError((uint) errorCode, intPtr, (uint) language));
         }
 
         public static string GetError(API errorCode)
@@ -250,46 +242,49 @@ namespace RshCSharpWrapper
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverGetRegisteredDeviceName(uint index, IntPtr ptr);
 
-        private static string GetRegisteredDeviceName(uint index)
+        /// <summary>
+        /// Read string data from driver;
+        /// </summary>
+        /// <typeparam name="T">String Type(U16P)</typeparam>
+        /// <param name="func">RSH func to run, accepting IntPtr with allocated datatype</param>
+        /// <returns></returns>
+        private static string GetStringFromDriver<T>(Func<IntPtr, uint> func) where T : IReturn, IString, new()
         {
-            var tmp = new U16P();
+            var tmp = new T();
             IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
-            Marshal.StructureToPtr(tmp, unmanagedAddr, true);              
-            var api = ToAPI(UniDriverGetRegisteredDeviceName(index, unmanagedAddr));
-            tmp = (U16P)Marshal.PtrToStructure(unmanagedAddr, typeof(U16P));
+            Marshal.StructureToPtr(tmp, unmanagedAddr, true);
+            var api = func(unmanagedAddr).ToAPI();
+            tmp = (T)Marshal.PtrToStructure(unmanagedAddr, typeof(T));
             Marshal.FreeHGlobal(unmanagedAddr);
             unmanagedAddr = IntPtr.Zero;
 
-            if (api != API.SUCCESS)
-                throw new RshDeviceException(api);
-            return tmp.ReturnValue();
+            return api == API.SUCCESS?tmp.ReturnValue():"";
         }
 
-        public static List<string> GetRegisteredDeviceNames()
-        {
-            var res = new List<string>();
-            try
+        /// <summary>
+        /// Get list of registered devices.
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<string> GetRegisteredDeviceNames()
+        {            
+            for(uint i = 0 ;; i++)
             {
-                for (uint index = 0; ; index++)
-                    res.Add(GetRegisteredDeviceName(index));
-            }
-            catch (RshDeviceException ex)
-            {
-                //We only need this type of exception, it is sign of the end of list, else rethrow;
-                if (ex.Api != API.REGISTRY_KEYCANTOPEN) throw;
-            }
-            return res;
+                var str = GetStringFromDriver<U16P>(intPtr => UniDriverGetRegisteredDeviceName(i, intPtr));
+                if(str!=string.Empty)
+                    yield return str;
+                else
+                    yield break;
+            }             
         }
 
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverCloseDeviceHandle(IntPtr deviceHandle);
 
-        public static void CloseDeviceHandle(IntPtr deviceHandle)
+        public static API CloseDeviceHandle(IntPtr deviceHandle)
         {
-            var res = ToAPI(UniDriverCloseDeviceHandle(deviceHandle));
-            if (res != API.SUCCESS)
-                throw new RshDeviceException(res);
+            deviceHandle.CheckIfDeviceHandleOk();
+            return UniDriverCloseDeviceHandle(deviceHandle).ToAPI();
         }
 
         #endregion

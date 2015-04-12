@@ -1,4 +1,5 @@
-﻿using RshCSharpWrapper.Types;
+﻿using System.Linq;
+using RshCSharpWrapper.Types;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -32,7 +33,7 @@ namespace RshCSharpWrapper.Device
         }
         public Device(string deviceName):this()
         {
-            Connector.GetDeviceHandle(deviceName, out deviceHandle);
+            Connector.GetDeviceHandle(deviceName, out deviceHandle).ThrowIfNotSuccess();
         }
 
         #region Valid implimentation of unmanaged resource destructor and IDisposable() http://msdn.microsoft.com/en-us/library/system.idisposable.aspx
@@ -66,7 +67,7 @@ namespace RshCSharpWrapper.Device
             Connector.UniDriverFreeBuffer(ref bufferS32);
             Connector.UniDriverFreeBuffer(ref bufferU32);
             Connector.UniDriverFreeBuffer(ref bufferDouble);
-            Connector.CloseDeviceHandle(deviceHandle);
+            Connector.CloseDeviceHandle(deviceHandle).ThrowIfNotSuccess();
 
             disposed = true;
         }
@@ -79,7 +80,7 @@ namespace RshCSharpWrapper.Device
         /// <param name="mode">Режим подключения, по базовому адресу(по умолчанию) или по серийному номеру.</param>
         public void Connect(uint id = 1, CONNECT_MODE mode = CONNECT_MODE.BASE)
         {            
-            Connector.Connect(deviceHandle, id, (uint)mode);           
+            Connector.Connect(deviceHandle, id, (uint)mode).ThrowIfNotSuccess();
         }
 
         //public API Init(InitDMA initStructure, INIT_MODE mode = INIT_MODE.INIT)
@@ -347,11 +348,11 @@ namespace RshCSharpWrapper.Device
 
         public void Start()
         {
-            Connector.Start(deviceHandle);
+            Connector.Start(deviceHandle).ThrowIfNotSuccess();
         }
         public void Stop()
         {
-            Connector.Stop(deviceHandle);        
+            Connector.Stop(deviceHandle).ThrowIfNotSuccess();        
         }
 
         //public API GetData(int[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
@@ -666,12 +667,10 @@ namespace RshCSharpWrapper.Device
         //    return st;
         //}
 
-        //TODO, Generic Getters
-        //public T Get<T>(GET mode, object param = null)
-        //{
-        //    API? result = null;
-        //    return (T)Get(mode, ref result, param);
-        //}
+        public T Get<T>(GET mode, object param = null)
+        {
+            return (T)Get(mode, param);
+        }
 
         /// <summary>
         /// Выборка параметров платы
@@ -679,7 +678,7 @@ namespace RshCSharpWrapper.Device
         /// <param name="mode">Режим выборки данных</param>
         /// <param name="param">Если выбран режим выборки с входным параметром, то здесь необходимо его передавать на вход. Структуры из namespace Types</param>
         /// <returns>Возвращает данные в зависимости от выбранного режима</returns>
-        public dynamic Get(GET mode, object param = null, bool returnAPIResult = false)
+        public dynamic Get(GET mode, object param = null)
         {
             var api = API.SUCCESS;
             if (deviceHandle == IntPtr.Zero)
@@ -784,7 +783,7 @@ namespace RshCSharpWrapper.Device
                 
         public static List<string> RshGetRegisteredDeviceNames()
         {
-            return Connector.GetRegisteredDeviceNames();
+            return Connector.GetRegisteredDeviceNames().ToList();
         }
     };
 }

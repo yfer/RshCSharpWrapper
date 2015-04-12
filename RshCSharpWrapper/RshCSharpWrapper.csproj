@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{55192326-69C2-45DE-BA6E-A88D44F8C963}</ProjectGuid>
+    <ProjectGuid>{918C5BCD-997E-43E7-947B-7B4703A09645}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RshCSharpWrapper</RootNamespace>
@@ -74,6 +74,7 @@
     <Compile Include="RshDeviceException.cs" />
     <Compile Include="Types\IBuffer.cs" />
     <Compile Include="Types\IReturn.cs" />
+    <Compile Include="Types\IString.cs" />
     <Compile Include="Types\Names.cs" />
     <Compile Include="Types\BoardPortInfo.cs" />
     <Compile Include="Types\BufferDouble.cs" />
