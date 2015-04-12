@@ -12,10 +12,6 @@ namespace RshCSharpWrapper.Types
         private uint id = 0; // уникальный идентификатор буфера (служебное поле)
         public IntPtr ptr = IntPtr.Zero;   //!< указатель на буфер
 
-        public BufferU32()
-        {
-        }
-
         public dynamic ReturnValue()
         {
             var tmpBufferInt = new int[(int)size];

@@ -26,14 +26,14 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetADCList()
         {
-            var result = Device.RshGetRegisteredDeviceNames();
+            var result = Device.GetRegisteredDeviceNames();
             Assert.IsFalse(result.Count == 0, "There is no boards installed on this machine.");
         }
 
         [TestMethod]
         public void GetGainList()
         {
-            foreach (var deviceName in Device.RshGetRegisteredDeviceNames())
+            foreach (var deviceName in Device.GetRegisteredDeviceNames())
                 using (var device = new Device(deviceName))
                 {
                     var list = device.Get(GET.DEVICE_GAIN_LIST);
@@ -43,7 +43,7 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetBaseAddressList()
         {
-            foreach (var deviceName in Device.RshGetRegisteredDeviceNames())
+            foreach (var deviceName in Device.GetRegisteredDeviceNames())
             {
                 using (var device = new Device(deviceName))
                 {
@@ -55,7 +55,7 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetParameters()
         {
-            foreach (var deviceName in Device.RshGetRegisteredDeviceNames())
+            foreach (var deviceName in Device.GetRegisteredDeviceNames())
                 using (var device = new Device(deviceName))
                 {                
                     var types = new List<Type>
@@ -107,7 +107,7 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void IsCapable()
         {
-            foreach (var deviceName in Device.RshGetRegisteredDeviceNames())
+            foreach (var deviceName in Device.GetRegisteredDeviceNames())
                 using (var device = new Device(deviceName))
                 {
                     string res = "";
@@ -120,7 +120,7 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetDataFromDriver()
         {
-            foreach (var deviceName in Device.RshGetRegisteredDeviceNames())
+            foreach (var deviceName in Device.GetRegisteredDeviceNames())
                 //if(deviceName=="LAN4USB")//!?
                 using (var device = new Device(deviceName))
                 {

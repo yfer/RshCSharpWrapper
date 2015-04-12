@@ -8,7 +8,7 @@ namespace RshCSharpWrapper.Device
 {
     public class Device : IDisposable
     {
-        private IntPtr deviceHandle;
+        private readonly Connector.DeviceHandle _handle;
         private BufferS8 bufferS8;
         private BufferS16 bufferS16;
         private BufferU16 bufferU16;
@@ -22,8 +22,6 @@ namespace RshCSharpWrapper.Device
 
         private Device()
         {
-            deviceHandle = IntPtr.Zero;
-
             bufferS8 = new BufferS8(0);
             bufferS16 = new BufferS16(0);
             bufferU16 = new BufferU16(0);
@@ -33,7 +31,7 @@ namespace RshCSharpWrapper.Device
         }
         public Device(string deviceName):this()
         {
-            Connector.GetDeviceHandle(deviceName, out deviceHandle).ThrowIfNotSuccess();
+            Connector.GetDeviceHandle(deviceName, out _handle).ThrowIfNotSuccess();
         }
 
         #region Valid implimentation of unmanaged resource destructor and IDisposable() http://msdn.microsoft.com/en-us/library/system.idisposable.aspx
@@ -67,7 +65,7 @@ namespace RshCSharpWrapper.Device
             Connector.UniDriverFreeBuffer(ref bufferS32);
             Connector.UniDriverFreeBuffer(ref bufferU32);
             Connector.UniDriverFreeBuffer(ref bufferDouble);
-            Connector.CloseDeviceHandle(deviceHandle).ThrowIfNotSuccess();
+            Connector.CloseDeviceHandle(_handle).ThrowIfNotSuccess();
 
             disposed = true;
         }
@@ -80,7 +78,7 @@ namespace RshCSharpWrapper.Device
         /// <param name="mode">Режим подключения, по базовому адресу(по умолчанию) или по серийному номеру.</param>
         public void Connect(uint id = 1, CONNECT_MODE mode = CONNECT_MODE.BASE)
         {            
-            Connector.Connect(deviceHandle, id, (uint)mode).ThrowIfNotSuccess();
+            Connector.Connect(_handle, id, mode).ThrowIfNotSuccess();
         }
 
         //public API Init(InitDMA initStructure, INIT_MODE mode = INIT_MODE.INIT)
@@ -144,7 +142,7 @@ namespace RshCSharpWrapper.Device
         public API Init(InitMemory initStructure, INIT_MODE mode = INIT_MODE.INIT)
         {
             API operationStatus;
-            if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
+            if (_handle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
 
             Types.InitMemory iS = new Types.InitMemory(0);
 
@@ -171,7 +169,7 @@ namespace RshCSharpWrapper.Device
 
             try
             {
-                operationStatus = Connector.Init(deviceHandle, (uint)mode, ref iS);
+                operationStatus = Connector.Init(_handle, (uint)mode, ref iS);
             }
             catch (Exception ex)
             {
@@ -348,11 +346,11 @@ namespace RshCSharpWrapper.Device
 
         public void Start()
         {
-            Connector.Start(deviceHandle).ThrowIfNotSuccess();
+            Connector.Start(_handle).ThrowIfNotSuccess();
         }
         public void Stop()
         {
-            Connector.Stop(deviceHandle).ThrowIfNotSuccess();        
+            Connector.Stop(_handle).ThrowIfNotSuccess();        
         }
 
         //public API GetData(int[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
@@ -681,13 +679,12 @@ namespace RshCSharpWrapper.Device
         public dynamic Get(GET mode, object param = null)
         {
             var api = API.SUCCESS;
-            if (deviceHandle == IntPtr.Zero)
-                throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
+            _handle.ThrowIfDeviceHandleNotOK();
 
             //Выясняем параметры работы выбранного режима
             var modeAttr = (ModeAttribute)Attribute.GetCustomAttribute(
                 mode.GetType().GetField(mode.ToString()),
-                typeof(ModeAttribute)
+                typeof(ModeAttribute) 
                 );
 
             if (modeAttr == null)
@@ -704,7 +701,7 @@ namespace RshCSharpWrapper.Device
             if (tmp is IBuffer)
                 api = Connector.AllocateBuffer(unmanagedAddr, 32);
             if (api == API.SUCCESS)
-                api = Connector.Get(deviceHandle, mode, unmanagedAddr);            
+                api = Connector.Get(_handle, mode, unmanagedAddr);            
             tmp = Marshal.PtrToStructure(unmanagedAddr, modeAttr.Type);
             var ret = tmp.ReturnValue();
             if (tmp is IBuffer)
@@ -780,7 +777,7 @@ namespace RshCSharpWrapper.Device
             }            
         }       
                 
-        public static List<string> RshGetRegisteredDeviceNames()
+        public static List<string> GetRegisteredDeviceNames()
         {
             return Connector.GetRegisteredDeviceNames().ToList();
         }
