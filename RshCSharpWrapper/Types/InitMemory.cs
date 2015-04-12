@@ -7,10 +7,6 @@ namespace RshCSharpWrapper.Types
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class InitMemory : IInit
     {
-        public InitMemory()
-        {
-        }
-
         /// <summary>
         /// data code URshInitMemoryType
         /// </summary>
@@ -28,7 +24,7 @@ namespace RshCSharpWrapper.Types
         }        
 
         public uint bufferSize = 0;	 // !< размер буфера в отсчётах (значение пересчитывается при инициализации в зависимости от сопутствующих настроек)
-        private double frequency = 0;	// !< частота дискретизации	
+        public double frequency = 0;	// !< частота дискретизации	
 
         internal uint control = 0;
 
