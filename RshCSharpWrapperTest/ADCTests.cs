@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RshCSharpWrapper.Device;
 using RshCSharpWrapper;
@@ -95,8 +97,10 @@ namespace RshCSharpWrapperTest
             string str = "";
             foreach (API api in Enum.GetValues(typeof(API)))
             {
-                str += api + ":" + Connector.GetError(api, LANGUAGE.ENGLISH) + "\n";
-                str += api + ":" + Connector.GetError(api, LANGUAGE.RUSSIAN) + "\n";
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en");
+                str += api + ":" + Connector.GetError(api) + "\n";
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("ru");
+                str += api + ":" + Connector.GetError(api) + "\n";
             }            
         }
 

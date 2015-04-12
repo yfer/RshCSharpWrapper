@@ -712,9 +712,8 @@ namespace RshCSharpWrapper.Device
             Marshal.FreeHGlobal(unmanagedAddr);
             unmanagedAddr = IntPtr.Zero;
 
-            if (api != API.SUCCESS)
-                throw new RshDeviceException(api);
-            
+            api.ThrowIfNotSuccess();
+
             return ret;
             //Что возвращаем?
             //switch (mode_attr.Name)

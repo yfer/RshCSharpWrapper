@@ -38,6 +38,25 @@ namespace RshCSharpWrapper
                 throw new RshDeviceException(API.DEVICE_DLLWASNOTLOADED);
         }
 
+        /// <summary>
+        /// Read string data from driver;
+        /// </summary>
+        /// <typeparam name="T">String Type(U16P)</typeparam>
+        /// <param name="func">RSH func to run, accepting IntPtr with allocated datatype</param>
+        /// <returns></returns>
+        private static string GetStringFromDriver<T>(Func<IntPtr, uint> func) where T : IReturn, IString, new()
+        {
+            var tmp = new T();
+            IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
+            Marshal.StructureToPtr(tmp, unmanagedAddr, true);
+            var api = func(unmanagedAddr).ToAPI();
+            tmp = (T)Marshal.PtrToStructure(unmanagedAddr, typeof(T));
+            Marshal.FreeHGlobal(unmanagedAddr);
+            unmanagedAddr = IntPtr.Zero;
+
+            return api == API.SUCCESS ? tmp.ReturnValue() : "";
+        }
+
         #region IRSHDevice functions
 
         #region Allocate & Free memory
@@ -225,41 +244,17 @@ namespace RshCSharpWrapper
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverGetError(uint errorCode, IntPtr value, uint language);
 
-        public static string GetError(API errorCode, LANGUAGE language)
-        {
-            return GetStringFromDriver<U16P>(intPtr => UniDriverGetError((uint) errorCode, intPtr, (uint) language));
-        }
-
         public static string GetError(API errorCode)
         {
             var language = LANGUAGE.ENGLISH;
             var ci = Thread.CurrentThread.CurrentCulture;
             if (ci.ThreeLetterISOLanguageName == "rus")
                 language = LANGUAGE.RUSSIAN;
-            return GetError(errorCode, language);
+            return GetStringFromDriver<U16P>(intPtr => UniDriverGetError((uint)errorCode, intPtr, (uint)language));
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverGetRegisteredDeviceName(uint index, IntPtr ptr);
-
-        /// <summary>
-        /// Read string data from driver;
-        /// </summary>
-        /// <typeparam name="T">String Type(U16P)</typeparam>
-        /// <param name="func">RSH func to run, accepting IntPtr with allocated datatype</param>
-        /// <returns></returns>
-        private static string GetStringFromDriver<T>(Func<IntPtr, uint> func) where T : IReturn, IString, new()
-        {
-            var tmp = new T();
-            IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
-            Marshal.StructureToPtr(tmp, unmanagedAddr, true);
-            var api = func(unmanagedAddr).ToAPI();
-            tmp = (T)Marshal.PtrToStructure(unmanagedAddr, typeof(T));
-            Marshal.FreeHGlobal(unmanagedAddr);
-            unmanagedAddr = IntPtr.Zero;
-
-            return api == API.SUCCESS?tmp.ReturnValue():"";
-        }
 
         /// <summary>
         /// Get list of registered devices.
