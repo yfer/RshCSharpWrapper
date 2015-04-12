@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RshCSharpWrapper.Device;
 using RshCSharpWrapper;
 using RshCSharpWrapper.Types;
-using Channel = RshCSharpWrapper.Device.Channel;
 using Double = RshCSharpWrapper.Types.Double;
-using InitMemory = RshCSharpWrapper.Device.InitMemory;
 
 namespace RshCSharpWrapperTest
 {
@@ -121,33 +122,37 @@ namespace RshCSharpWrapperTest
         public void GetDataFromDriver()
         {
             foreach (var deviceName in Device.GetRegisteredDeviceNames())
-                //if(deviceName=="LAN4USB")//!?
+                if(deviceName=="LAN4USB")//!?
                 using (var device = new Device(deviceName))
                 {
+                    var r = new Random();
+                    var gains = device.Get<uint[]>(GET.DEVICE_GAIN_LIST);
                     device.Connect();
                 
                     //Структура для инициализации параметров работы устройства.  
-                    var p = new InitMemory();
-                    //Запуск сбора данных программный. 
-                    p.startType = (uint)InitADC.StartTypeBit.Program;
-                    //Размер внутреннего блока данных, по готовности которого произойдёт прерывание.
-                    p.bufferSize = BSIZE;
-                    //Частота дискретизации.
-                    p.frequency = SAMPLE_FREQ;
+                    var p = new InitMemory
+                    {
+                        //Запуск сбора данных программный. 
+                        StartType = StartType.Program,
+                        //Размер внутреннего блока данных, по готовности которого произойдёт прерывание.
+                        bufferSize = BSIZE,
+                        //Частота дискретизации.
+                        frequency = SAMPLE_FREQ
+                    };
 
                     //Сделаем 0-ой канал активным.
-                    p.channels[0].control = (uint)Channel.ControlBit.Used;
+                    p.channels[0].Control = ChannelControl.Used;
                     //Зададим коэффициент усиления для 0-го канала.
-                    p.channels[0].gain = 10;
+                    p.channels[0].Gain = gains[r.Next(gains.Count())];
 
-                    //Сделаем 0-ой канал активным.
-                    p.channels[1].control = (uint)Channel.ControlBit.Used;
-                    //Зададим коэффициент усиления для 0-го канала.
-                    p.channels[1].gain = 10;
+                    //Сделаем 1-ый канал активным.
+                    p.channels[1].Control = ChannelControl.Used;
+                    //Зададим коэффициент усиления для 1-го канала.
+                    p.channels[1].Gain = gains[r.Next(gains.Count())];
 
                     //Инициализация устройства (передача выбранных параметров сбора данных)
                     //После инициализации неправильные значения в структуре будут откорректированы.
-                    var res = device.Init(p);
+                    device.Init(p);
 
                     //=================== ИНФОРМАЦИЯ О ПРЕДСТОЯЩЕМ СБОРЕ ДАННЫХ ====================== 
                     uint 

@@ -139,70 +139,16 @@ namespace RshCSharpWrapper.Device
         //    return st;
         //}
 
-        public API Init(InitMemory initStructure, INIT_MODE mode = INIT_MODE.INIT)
-        {
-            API operationStatus;
-            if (_handle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-            Types.InitMemory iS = new Types.InitMemory(0);
-
-            iS.bufferSize = initStructure.bufferSize;
-            iS.control = initStructure.control;
-            iS.frequency = initStructure.frequency;
-            iS.startType = initStructure.startType;
-            iS.beforeHistory = initStructure.beforeHistory;
-            iS.controlSynchro = initStructure.controlSynchro;
-            iS.hysteresis = initStructure.hysteresis;
-            iS.packetNumber = initStructure.packetNumber;
-            iS.startDelay = initStructure.startDelay;
-            iS.threshold = initStructure.threshold;
-            iS.channelSynchro.control = initStructure.channelSynchro.control;
-            iS.channelSynchro.gain = initStructure.channelSynchro.gain;
-
-
-            for (int i = 0; i < initStructure.channels.Length; i++)
-            {
-                iS.channels[i].control = initStructure.channels[i].control;
-                iS.channels[i].gain = initStructure.channels[i].gain;
-                iS.channels[i].delta = initStructure.channels[i].delta;
-            }
-
-            try
-            {
-                operationStatus = Connector.Init(_handle, (uint)mode, ref iS);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                if (ex.Message.Contains("Unable to load DLL"))
-                    return API.UNIDRIVER_DLLWASNOTLOADED;
-                return API.UNDEFINED;
-            }
-            
-            if (operationStatus == API.SUCCESS)
-            {
-                initStructure.bufferSize = iS.bufferSize;
-                initStructure.control = iS.control;
-                initStructure.frequency = iS.frequency;
-                initStructure.startType = iS.startType;
-                initStructure.beforeHistory = iS.beforeHistory;
-                initStructure.controlSynchro = iS.controlSynchro;
-                initStructure.hysteresis = iS.hysteresis;
-                initStructure.packetNumber = iS.packetNumber;
-                initStructure.startDelay = iS.startDelay;
-                initStructure.threshold = iS.threshold;
-                initStructure.channelSynchro.control = iS.channelSynchro.control;
-                initStructure.channelSynchro.gain = iS.channelSynchro.gain;
-
-                for (int i = 0; i < initStructure.channels.Length; i++)
-                {
-                    initStructure.channels[i].control = iS.channels[i].control;
-                    initStructure.channels[i].gain = iS.channels[i].gain;
-                    initStructure.channels[i].delta = iS.channels[i].delta;
-                }
-            }
-
-            return operationStatus;
+        public void Init(IInit initStructure, INIT_MODE mode = INIT_MODE.INIT)
+        {  
+            _handle.ThrowIfDeviceHandleNotOK();
+            var size = Marshal.SizeOf(initStructure.GetType());
+            var buff = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(initStructure, buff, true);
+            var api = Connector.Init(_handle, mode, buff);
+            Marshal.PtrToStructure(buff, initStructure);
+            Marshal.FreeHGlobal(buff);
+            api.ThrowIfNotSuccess();
         }
         
         //public API Init(InitGSPF initStructure, INIT_MODE mode = INIT_MODE.INIT)

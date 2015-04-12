@@ -1,18 +1,20 @@
-﻿namespace RshCSharpWrapper.Device
+﻿using RshCSharpWrapper.Types;
+
+namespace RshCSharpWrapper.Device
 {
     public class InitADC
     {
-        public uint startType;	// !< настройки типа старта платы
-        public uint bufferSize;	// !< размер буфера в отсчётах (значение пересчитывается при инициализации в зависимости от сопутствующих настроек)
-        public double frequency;	// !< частота дискретизации	
+        public uint startType = 1;	// !< настройки типа старта платы
+        public uint bufferSize = 0;	// !< размер буфера в отсчётах (значение пересчитывается при инициализации в зависимости от сопутствующих настроек)
+        public double frequency = 0;	// !< частота дискретизации	
         public Channel[] channels; // параметры каналов
-        public double threshold;		//!< уровень синхронизации в Вольтах
-        public uint controlSynchro;	//!< специфические настройки синхронизации
+        public double threshold = 0;		//!< уровень синхронизации в Вольтах
+        public uint controlSynchro = 0;	//!< специфические настройки синхронизации
 
         public enum ControlSynchroBit : uint// параметры синхронизации
         {
             FrequencySwitchOFF = 0x0, //!< предыстория и история собираются с одной частотой (ADC_CONTROL_ESW)
-            SlopeFront = 0x1,	      //!< синхронизация по фронту
+            SlopeFront = 0x1,	      //!< синхронизация по фронту  
             SlopeDecline = 0x2,       //!< синхронизация по спаду
             FrequencySwitchOn = 0x4   //!< предыстория и история собираются с разными частотами (ADC_CONTROL_FSW)
         };
@@ -27,15 +29,9 @@
         };
         public InitADC()
         {
-            startType = 1;
-            frequency = 0;
-            bufferSize = 0;
             channels = new Channel[32];
             for (int i = 0; i < 32; i++)
                 channels[i] = new Channel();
-
-            threshold = 0.0;
-            controlSynchro = 0;
         }
         public void SetStartType(params StartTypeBit[] array)
         {

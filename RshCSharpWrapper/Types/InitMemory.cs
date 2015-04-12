@@ -1,41 +1,67 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal struct InitMemory
+    public class InitMemory : IInit
     {
-        private Names typeName;     // data code				URshInitMemoryType
+        public InitMemory()
+        {
+        }
 
-        public uint startType;	// !< настройки типа старта платы
-        public uint bufferSize;	// !< размер буфера в отсчётах (значение пересчитывается при инициализации в зависимости от сопутствующих настроек)
-        public double frequency;	// !< частота дискретизации	
+        /// <summary>
+        /// data code URshInitMemoryType
+        /// </summary>
+        private Names typeName = Names.InitMemory;     
+        
+        /// <summary>
+        /// Настройки типа старта платы
+        /// </summary>
+        internal uint startType = 0;	
 
-        public uint control;
+        public StartType StartType
+        {
+            get { return (StartType)startType; }
+            set { startType = (uint)value; }
+        }        
 
-        public uint beforeHistory;	//!< размер предыстории, может принимать значения от 0 до 15
-        public uint startDelay;		//!< задержка старта
-        public uint hysteresis;		//!< гистеризис
-        public uint packetNumber;	//!< количество пакетов размера bufferSize
+        public uint bufferSize = 0;	 // !< размер буфера в отсчётах (значение пересчитывается при инициализации в зависимости от сопутствующих настроек)
+        private double frequency = 0;	// !< частота дискретизации	
 
-        public double threshold;		//!< уровень синхронизации в Вольтах
-        public uint controlSynchro;	//!< специфические настройки синхронизации
+        internal uint control = 0;
 
-        public SynchroChannel channelSynchro; //<! настройки канала внешней синхронизации
+        public Control Control
+        {
+            get { return (Control) control; }
+            set { control = (uint)value; }
+        }        
+
+        public uint beforeHistory = 0;	//!< размер предыстории, может принимать значения от 0 до 15
+        public uint startDelay = 0;		//!< задержка старта
+        public uint hysteresis = 0;		//!< гистеризис
+        public uint packetNumber = 0;	//!< количество пакетов размера bufferSize
+
+        public double threshold = 0;		//!< уровень синхронизации в Вольтах
+        internal uint controlSynchro = 0;	//!< специфические настройки синхронизации
+
+        public ControlSynchro ControlSynchro
+        {
+            get { return (ControlSynchro)controlSynchro; }
+            set { controlSynchro = (uint)value; }
+        }
+
+        public double Frequency
+        {
+            get { return frequency; }
+            set { frequency = value; }
+        }
+
+        public SynchroChannel channelSynchro = new SynchroChannel(); //<! настройки канала внешней синхронизации
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public Channel[] channels; // параметры каналов
+        public Channel[] channels = new Channel[32]; // параметры каналов
 
-        public InitMemory(UInt32 st)
-        {
-            typeName = Names.InitMemory;
-            startType = 0;
-            control = bufferSize = controlSynchro = 0;
-            frequency = threshold = 0;
-            beforeHistory = startDelay = startDelay = hysteresis = packetNumber = 0;
-            channelSynchro = new SynchroChannel();
-            channels = new Channel[32];
-        }
     };
 }

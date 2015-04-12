@@ -48,6 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChannelControl.cs" />
+    <Compile Include="Control.cs" />
+    <Compile Include="ControlSynchro.cs" />
     <Compile Include="Device\Register.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RshDevice.cs" />
@@ -72,7 +75,9 @@
     <Compile Include="CAPS.cs" />
     <Compile Include="GET.cs" />
     <Compile Include="RshDeviceException.cs" />
+    <Compile Include="StartType.cs" />
     <Compile Include="Types\IBuffer.cs" />
+    <Compile Include="Types\IInit.cs" />
     <Compile Include="Types\IReturn.cs" />
     <Compile Include="Types\IString.cs" />
     <Compile Include="Types\Names.cs" />

@@ -3,7 +3,7 @@
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal struct SynchroChannel   // настройка канала платы
+    public struct SynchroChannel   // настройка канала платы
     {
         public uint gain;		//!< коэффициент усиления
         public uint control;	//!< специфические настройки канала        

@@ -203,9 +203,13 @@ namespace RshCSharpWrapper
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, ref InitMemory initStructure);
 
-        public static API Init(DeviceHandle handle, uint initializationMode, ref InitMemory initStructure)
+        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern uint UniDriverInit(IntPtr deviceHandle, uint initializationMode, IntPtr initStructure);
+
+
+        public static API Init(DeviceHandle handle, INIT_MODE initializationMode, IntPtr initStructure)
         {
-            return UniDriverInit(handle, initializationMode, ref initStructure).ToAPI();
+            return UniDriverInit(handle, (uint)initializationMode, initStructure).ToAPI();
         }
 
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
