@@ -237,6 +237,10 @@ namespace RshCSharpWrapper
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint UniDriverGetData(IntPtr deviceHandle, uint getMode, IntPtr value);
 
+        public static API GetData(DeviceHandle handle, DATA_MODE mode, IntPtr value)
+        {
+            return UniDriverGetData(handle, (uint) mode, value).ToAPI();
+        }
 
         #region GetData
 
