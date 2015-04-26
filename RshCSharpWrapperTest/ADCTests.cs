@@ -119,10 +119,10 @@ namespace RshCSharpWrapperTest
             foreach (var deviceName in Device.GetRegisteredDeviceNames())
                 if(deviceName=="LAN4USB")//!?
                 using (var device = new Device(deviceName))
-                {                    
-                    var gains = device.Get<uint[]>(GET.DEVICE_GAIN_LIST);
-                    var freqs = device.Get<double[]>(GET.DEVICE_FREQUENCY_LIST);
-                    var bufs = device.Get<uint[]>(GET.DEVICE_SIZE_LIST);
+                {
+                    var gains = (uint[])device.Get(GET.DEVICE_GAIN_LIST);
+                    var freqs = (double[])device.Get(GET.DEVICE_FREQUENCY_LIST);
+                    var bufs = (uint[])device.Get(GET.DEVICE_SIZE_LIST);
                     device.Connect();
                 
                     //Структура для инициализации параметров работы устройства.  

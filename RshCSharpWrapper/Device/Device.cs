@@ -405,11 +405,7 @@ namespace RshCSharpWrapper.Device
         //    return st;
         //}
 
-        public T Get<T>(GET mode, object param = null)
-        {
-            return (T)Get(mode, param);
-        }
-
+        /// <summary>
         /// Ожидать готовности данных. Необходимо ожидать после запуска Start();
         /// </summary>
         /// <param name="timeout">Таймаут ожидания, мс, по умолчанию бесконечный.</param>
