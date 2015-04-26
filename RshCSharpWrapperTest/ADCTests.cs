@@ -164,8 +164,8 @@ namespace RshCSharpWrapperTest
                 
                     device.Start(); // Запускаем плату на сбор буфера.
                     var v = device.Get(GET.WAIT_BUFFER_READY_EVENT, waitTime);
-                    //if (v==100000)	// Ожидаем готовность буфера.
-                    //{
+                    if (v==100000)	// Ожидаем готовность буфера.
+                    {
                         device.Stop();
 
                         //Получаем буфер с данными.
@@ -177,7 +177,7 @@ namespace RshCSharpWrapperTest
                         var ret6 = device.GetData(Device.DataTypeEnum.Int8, p.bufferSize * activeChannelsCount);
                         var ret7 = device.GetData(Device.DataTypeEnum.UInt8, p.bufferSize * activeChannelsCount);
 
-                    //}
+                    }
                 }
         }        
     }

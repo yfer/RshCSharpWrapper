@@ -421,7 +421,7 @@ namespace RshCSharpWrapper.Device
                 throw new InvalidOperationException("Does this mode wait 'param'? :" + modeAttr.Input + " but param is " + param);
             
             //Для передачи в RshUniDriver, в соответствии с типом данных с которым работает данная настройка.
-            dynamic tmp = Activator.CreateInstance(modeAttr.Type);
+            dynamic tmp = param ?? Activator.CreateInstance(modeAttr.Type);
 
             //Обращение к RshUniDriver и возвращение результата из неуправляемой памят
             var unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(tmp));
