@@ -23,7 +23,14 @@ namespace RshCSharpWrapper.Types
             set { startType = (uint)value; }
         }        
 
-        public uint bufferSize = 0;	 // !< размер буфера в отсчётах (значение пересчитывается при инициализации в зависимости от сопутствующих настроек)
+        private uint bufferSize = 0;	 // !< размер буфера в отсчётах (значение пересчитывается при инициализации в зависимости от сопутствующих настроек)
+
+        public uint BufferSize
+        {
+            get { return bufferSize; } 
+            set { bufferSize = value; }
+        }
+
         public double frequency = 0;	// !< частота дискретизации	
 
         internal uint control = 0;

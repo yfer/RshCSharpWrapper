@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using RshCSharpWrapper.Types;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ namespace RshCSharpWrapper.Device
     public class Device : IDisposable
     {
         private readonly Connector.DeviceHandle _handle;
+
+        private IInit currentInitStructure;
 
         public Device(string deviceName)
         {
@@ -124,6 +127,8 @@ namespace RshCSharpWrapper.Device
             Marshal.PtrToStructure(buff, initStructure);
             Marshal.FreeHGlobal(buff);
             api.ThrowIfNotSuccess();
+
+            currentInitStructure = initStructure;
         }
         
         //public API Init(InitGSPF initStructure, INIT_MODE mode = INIT_MODE.INIT)
@@ -265,10 +270,17 @@ namespace RshCSharpWrapper.Device
         //    return st;
         //}
 
+        /// <summary>
+        /// Запуск съема данных. Для того чтобы ждать новые данные надо использовать WaitBufferReady
+        /// </summary>
         public void Start()
         {
             Connector.Start(_handle).ThrowIfNotSuccess();
         }
+
+        /// <summary>
+        /// Прекратить съем данных
+        /// </summary>
         public void Stop()
         {
             Connector.Stop(_handle).ThrowIfNotSuccess();        
@@ -284,10 +296,10 @@ namespace RshCSharpWrapper.Device
             //UInt32,
             Double
         }
-        public dynamic GetData(DataTypeEnum type, uint size, DATA_MODE mode = DATA_MODE.NO_FLAGS)
+        public dynamic GetData(DataTypeEnum type, DATA_MODE mode = DATA_MODE.NO_FLAGS)
         {
             _handle.ThrowIfDeviceHandleNotOK();
-
+            uint size = Get(GET.DEVICE_ACTIVE_CHANNELS_NUMBER) * currentInitStructure.BufferSize;
             dynamic buffer;
             switch (type)
             {
@@ -398,6 +410,14 @@ namespace RshCSharpWrapper.Device
             return (T)Get(mode, param);
         }
 
+        /// Ожидать готовности данных. Необходимо ожидать после запуска Start();
+        /// </summary>
+        /// <param name="timeout">Таймаут ожидания, мс, по умолчанию бесконечный.</param>
+        /// <returns>Ожидание успешно</returns>
+        public bool WaitBufferReady(uint timeout = 0xffffffff) //RSH_INFINITE_WAIT_TIME
+        {
+            return timeout == Get(GET.WAIT_BUFFER_READY_EVENT, new U32 { data = timeout });
+        }
         /// <summary>
         /// Выборка параметров платы
         /// </summary>

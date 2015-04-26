@@ -7,5 +7,6 @@ namespace RshCSharpWrapper.Types
 {
     public interface IInit
     {
+        uint BufferSize { get; set; }
     }
 }

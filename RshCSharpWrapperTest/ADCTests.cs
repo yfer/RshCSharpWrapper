@@ -122,12 +122,14 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetDataFromDriver()
         {
+            var r = new Random();
             foreach (var deviceName in Device.GetRegisteredDeviceNames())
                 if(deviceName=="LAN4USB")//!?
                 using (var device = new Device(deviceName))
-                {
-                    var r = new Random();
+                {                    
                     var gains = device.Get<uint[]>(GET.DEVICE_GAIN_LIST);
+                    var freqs = device.Get<double[]>(GET.DEVICE_FREQUENCY_LIST);
+                    var bufs = device.Get<uint[]>(GET.DEVICE_SIZE_LIST);
                     device.Connect();
                 
                     //Структура для инициализации параметров работы устройства.  
@@ -136,9 +138,9 @@ namespace RshCSharpWrapperTest
                         //Запуск сбора данных программный. 
                         StartType = StartType.Program,
                         //Размер внутреннего блока данных, по готовности которого произойдёт прерывание.
-                        bufferSize = BSIZE,
+                        BufferSize = bufs[bufs.Count()-1],
                         //Частота дискретизации.
-                        frequency = SAMPLE_FREQ
+                        frequency = freqs[freqs.Count()-1]
                     };
 
                     //Сделаем 0-ой канал активным.
@@ -155,27 +157,23 @@ namespace RshCSharpWrapperTest
                     //После инициализации неправильные значения в структуре будут откорректированы.
                     device.Init(p);
 
-                    //=================== ИНФОРМАЦИЯ О ПРЕДСТОЯЩЕМ СБОРЕ ДАННЫХ ====================== 
-                    uint 
-                        activeChannelsCount = device.Get(GET.DEVICE_ACTIVE_CHANNELS_NUMBER),
-                        serNum = device.Get(GET.DEVICE_SERIAL_NUMBER);                
-
                     // Время ожидания(в миллисекундах) до наступления прерывания. Прерывание произойдет при полном заполнении буфера. 
                     var sw = new Stopwatch();
                     sw.Start();
-                    for (int i = 0; i < 100; i++)
+                    for (var i = 0; i < 10; i++)
                     {
                         device.Start(); // Запускаем плату на сбор буфера.                        
-                        device.Get(GET.WAIT_BUFFER_READY_EVENT, new U32 { data = 100000 });
-                        //Получаем буфер с данными.
-                        //var ret1 = device.GetData(Device.DataTypeEnum.Int16, p.bufferSize*activeChannelsCount);
-                        //var ret2 = device.GetData(Device.DataTypEnum.UInt16, p.bufferSize * activeChannelsCount);//Throws
-                        //var ret3 = device.GetData(Device.DataTypeEnum.Int32, p.bufferSize*activeChannelsCount);
-                        //var ret4 = device.GetData(Device.DataTypEnum.UInt32, p.bufferSize * activeChannelsCount);//Throws
-                        var ret5 = device.GetData(Device.DataTypeEnum.Double, p.bufferSize*activeChannelsCount);
-                        //var ret6 = device.GetData(Device.DataTypeEnum.Int8, p.bufferSize*activeChannelsCount);
-                        //var ret7 = device.GetData(Device.DataTypeEnum.UInt8, p.bufferSize*activeChannelsCount);
-
+                        if (device.WaitBufferReady())
+                        {
+                            //Получаем буфер с данными.
+                            //var ret1 = device.GetData(Device.DataTypeEnum.Int16);
+                            //var ret2 = device.GetData(Device.DataTypEnum.UInt16);//Throws
+                            //var ret3 = device.GetData(Device.DataTypeEnum.Int32);
+                            //var ret4 = device.GetData(Device.DataTypEnum.UInt32);//Throws
+                            var ret5 = device.GetData(Device.DataTypeEnum.Double);
+                            //var ret6 = device.GetData(Device.DataTypeEnum.Int8);
+                            //var ret7 = device.GetData(Device.DataTypeEnum.UInt8);
+                        }
                     }
                     sw.Stop();
                     var t = sw.ElapsedMilliseconds;
