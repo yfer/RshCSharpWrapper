@@ -11,6 +11,7 @@ namespace RshCSharpWrapper.Types
         public uint psize; //!< количество элементов в буфере
         private uint id;
         public IntPtr ptr;   //!< указатель на буфер
+
         public dynamic ReturnValue()
         {
             var tmpBufferInt = new int[(int)size];

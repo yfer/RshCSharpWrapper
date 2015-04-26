@@ -53,10 +53,14 @@ namespace RshCSharpWrapper
 
         #region IRSHDevice functions
 
-        #region Allocate & Free memory
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverFreeBuffer(IntPtr uRshBuffer);
 
+        /// <summary>
+        /// Free pre-allocated buffer
+        /// </summary>
+        /// <param name="uRshBuffer"></param>
+        /// <returns></returns>
         public static API FreeBuffer(IntPtr uRshBuffer)
         {
             return UniDriverFreeBuffer(uRshBuffer).ToAPI();
@@ -65,65 +69,17 @@ namespace RshCSharpWrapper
         [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
         private static extern uint UniDriverAllocateBuffer(IntPtr uRshBuffer, uint desiredBufferSize);
 
+        /// <summary>
+        /// Allocate buffer
+        /// </summary>
+        /// <param name="uRshBuffer"></param>
+        /// <param name="desiredBufferSize"></param>
+        /// <returns></returns>
         public static API AllocateBuffer(IntPtr uRshBuffer, uint desiredBufferSize)
         {
             return UniDriverAllocateBuffer(uRshBuffer, desiredBufferSize).ToAPI();
         }
 
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref BufferS8 uRshBuffer);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref BufferS8 uRshBuffer, uint desiredBufferSize);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref BufferS16 uRshBuffer);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref BufferS16 uRshBuffer, uint desiredBufferSize);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref BufferS32 uRshBuffer);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref BufferS32 uRshBuffer, uint desiredBufferSize);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref BufferS64 uRshBuffer);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref BufferS64 uRshBuffer, uint desiredBufferSize);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref BufferU8 uRshBuffer);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref BufferU8 uRshBuffer, uint desiredBufferSize);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref BufferU16 uRshBuffer);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref BufferU16 uRshBuffer, uint desiredBufferSize);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref BufferU32 uRshBuffer);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref BufferU32 uRshBuffer, uint desiredBufferSize);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref BufferU64 uRshBuffer);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref BufferU64 uRshBuffer, uint desiredBufferSize);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverFreeBuffer(ref BufferDouble uRshBuffer);
-
-        [DllImport("RshUniDriver.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint UniDriverAllocateBuffer(ref BufferDouble uRshBuffer, uint desiredBufferSize);
-        #endregion
         /// <summary>
         /// Выполняет подключение к драйверу устройства
         /// </summary>

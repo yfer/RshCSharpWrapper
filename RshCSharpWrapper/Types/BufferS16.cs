@@ -7,10 +7,10 @@ namespace RshCSharpWrapper.Types
     internal class BufferS16 : IReturn, IBuffer
     {
         private Names typeName = Names.BufferS16;  //!< тип данных буфера
-        public uint size = 0 ;  //!< данное поле используется после вызова UniDriverGetData(), чтобы отразить реальное количество скопированных данных в буфер
-        public uint psize = 0; //!< количество элементов в буфере
-        private uint id = 0;
-        public IntPtr ptr = IntPtr.Zero;   //!< указатель на буфер
+        public uint size;  //!< данное поле используется после вызова UniDriverGetData(), чтобы отразить реальное количество скопированных данных в буфер
+        public uint psize; //!< количество элементов в буфере
+        private uint id;
+        public IntPtr ptr;   //!< указатель на буфер
         
         public dynamic ReturnValue()
         {

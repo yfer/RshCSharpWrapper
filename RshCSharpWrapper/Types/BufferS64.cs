@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace RshCSharpWrapper.Types
 {
+    //TODO: Convert to class like BufferS32
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct BufferS64
     {
