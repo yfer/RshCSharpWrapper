@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -160,24 +161,25 @@ namespace RshCSharpWrapperTest
                         serNum = device.Get(GET.DEVICE_SERIAL_NUMBER);                
 
                     // Время ожидания(в миллисекундах) до наступления прерывания. Прерывание произойдет при полном заполнении буфера. 
-                    U32 waitTime = new U32() { data = 100000 };
-                
-                    device.Start(); // Запускаем плату на сбор буфера.
-                    var v = device.Get(GET.WAIT_BUFFER_READY_EVENT, waitTime);
-                    if (v==100000)	// Ожидаем готовность буфера.
+                    var sw = new Stopwatch();
+                    sw.Start();
+                    for (int i = 0; i < 100; i++)
                     {
-                        device.Stop();
-
+                        device.Start(); // Запускаем плату на сбор буфера.                        
+                        device.Get(GET.WAIT_BUFFER_READY_EVENT, new U32 { data = 100000 });
                         //Получаем буфер с данными.
-                        var ret1 = device.GetData(Device.DataTypeEnum.Int16,p.bufferSize * activeChannelsCount);
-                        //var ret2 = device.GetData(Device.DataTypEnum.UInt16, p.bufferSize * activeChannelsCount);
-                        var ret3 = device.GetData(Device.DataTypeEnum.Int32, p.bufferSize * activeChannelsCount);
-                        //var ret4 = device.GetData(Device.DataTypEnum.UInt32, p.bufferSize * activeChannelsCount);
-                        var ret5 = device.GetData(Device.DataTypeEnum.Double, p.bufferSize * activeChannelsCount);
-                        var ret6 = device.GetData(Device.DataTypeEnum.Int8, p.bufferSize * activeChannelsCount);
-                        var ret7 = device.GetData(Device.DataTypeEnum.UInt8, p.bufferSize * activeChannelsCount);
+                        //var ret1 = device.GetData(Device.DataTypeEnum.Int16, p.bufferSize*activeChannelsCount);
+                        //var ret2 = device.GetData(Device.DataTypEnum.UInt16, p.bufferSize * activeChannelsCount);//Throws
+                        //var ret3 = device.GetData(Device.DataTypeEnum.Int32, p.bufferSize*activeChannelsCount);
+                        //var ret4 = device.GetData(Device.DataTypEnum.UInt32, p.bufferSize * activeChannelsCount);//Throws
+                        var ret5 = device.GetData(Device.DataTypeEnum.Double, p.bufferSize*activeChannelsCount);
+                        //var ret6 = device.GetData(Device.DataTypeEnum.Int8, p.bufferSize*activeChannelsCount);
+                        //var ret7 = device.GetData(Device.DataTypeEnum.UInt8, p.bufferSize*activeChannelsCount);
 
                     }
+                    sw.Stop();
+                    var t = sw.ElapsedMilliseconds;
+                    device.Stop();
                 }
         }        
     }
