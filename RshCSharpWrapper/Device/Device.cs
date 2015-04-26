@@ -9,27 +9,8 @@ namespace RshCSharpWrapper.Device
     public class Device : IDisposable
     {
         private readonly Connector.DeviceHandle _handle;
-        private BufferS8 bufferS8;
-        private BufferS16 bufferS16;
-        private BufferU16 bufferU16;
-        private BufferS32 bufferS32;
-        private BufferU32 bufferU32;
-        private BufferDouble bufferDouble;
 
-        private short[] tmpBufferShort = new short[1]; // буфер используется в GetData для копирования данных типа unsigned
-        private int[] tmpBufferInt = new int[1];
-        private double[] tmpBufferDouble = new double[1];
-
-        private Device()
-        {
-            bufferS8 = new BufferS8(0);
-            bufferS16 = new BufferS16(0);
-            bufferU16 = new BufferU16(0);
-            bufferS32 = new BufferS32(0);
-            bufferU32 = new BufferU32();
-            bufferDouble = new BufferDouble(0);
-        }
-        public Device(string deviceName):this()
+        public Device(string deviceName)
         {
             Connector.GetDeviceHandle(deviceName, out _handle).ThrowIfNotSuccess();
         }
@@ -59,12 +40,6 @@ namespace RshCSharpWrapper.Device
             // Free any unmanaged objects here. 
             //
 
-            Connector.UniDriverFreeBuffer(ref bufferS8);
-            Connector.UniDriverFreeBuffer(ref bufferS16);
-            Connector.UniDriverFreeBuffer(ref bufferU16);
-            Connector.UniDriverFreeBuffer(ref bufferS32);
-            Connector.UniDriverFreeBuffer(ref bufferU32);
-            Connector.UniDriverFreeBuffer(ref bufferDouble);
             Connector.CloseDeviceHandle(_handle).ThrowIfNotSuccess();
 
             disposed = true;
@@ -299,281 +274,81 @@ namespace RshCSharpWrapper.Device
             Connector.Stop(_handle).ThrowIfNotSuccess();        
         }
 
-        //public API GetData(int[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
-        //{
-        //    uint operationStatus;
-        //    if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-        //    API st = API.SUCCESS;
-
-        //    try
-        //    {
-        //        st = (API)Connector.UniDriverAllocateBuffer(ref bufferS32, (uint)buffer.Length);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        if (ex.Message.Contains("Unable to load DLL"))
-        //            return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //        else
-        //            return API.UNDEFINED;
-        //    }
-
-        //    if (st == API.SUCCESS)
-        //    {
-
-        //        try
-        //        {
-        //            operationStatus = Connector.UniDriverGetData(deviceHandle, (uint)mode, ref bufferS32);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine(ex.Message);
-        //            if (ex.Message.Contains("Unable to load DLL"))
-        //                return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //            else
-        //                return API.UNDEFINED;
-        //        }
-        //        st = (API)(operationStatus & MASK_RSH_ERROR);
-
-        //        if (st != API.SUCCESS) return st;
-
-        //        System.Runtime.InteropServices.Marshal.Copy(bufferS32.ptr, buffer, 0, (int)bufferS32.size);
-        //    }
-
-        //    return st;
-        //}
-        public API GetData(short[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
+        public enum DataTypeEnum
+        {
+            Int8,
+            UInt8,
+            Int16,
+            //UInt16,
+            Int32,
+            //UInt32,
+            Double
+        }
+        public dynamic GetData(DataTypeEnum type, uint size, DATA_MODE mode = DATA_MODE.NO_FLAGS)
         {
             _handle.ThrowIfDeviceHandleNotOK();
 
-            //try
-            //{
-            uint size = 10000;
-
-            var buf = new BufferS16(size);
-            IntPtr bufptr = Marshal.AllocHGlobal(Marshal.SizeOf(buf));
-            Marshal.StructureToPtr(buf, bufptr, true);
+            dynamic buffer;
+            switch (type)
+            {
+                case DataTypeEnum.Int8:
+                    buffer = new BufferS8();
+                    break;
+                case DataTypeEnum.UInt8:
+                    buffer = new BufferS8();
+                    break;
+                case DataTypeEnum.Int16:
+                    buffer = new BufferS16();
+                break;
+                //case DataTypEnum.UInt16:
+                //    buffer = new BufferU16();
+                //break;
+                case DataTypeEnum.Int32:
+                    buffer = new BufferS32();
+                break;
+                //case DataTypEnum.UInt32:
+                //    buffer = new BufferU32();
+                //break;
+                case DataTypeEnum.Double:
+                    buffer = new BufferDouble();
+                break;
+                default:
+                    throw new InvalidOperationException();
+            }
+            
+            IntPtr bufptr = Marshal.AllocHGlobal(Marshal.SizeOf(buffer));
+            Marshal.StructureToPtr(buffer, bufptr, true);
             Connector.AllocateBuffer(bufptr, size).ThrowIfNotSuccess();
             Connector.GetData(_handle, mode, bufptr).ThrowIfNotSuccess();
-            buf = (BufferS16)Marshal.PtrToStructure(bufptr, typeof(BufferS16));
-            Marshal.Copy(buf.ptr, buffer, 0, (int) buf.size);
+            switch (type)
+            {
+                case DataTypeEnum.Int8:
+                    buffer = Marshal.PtrToStructure(bufptr, typeof(BufferS8));
+                    break;
+                case DataTypeEnum.UInt8:
+                    buffer = Marshal.PtrToStructure(bufptr, typeof(BufferU8));
+                    break;
+                case DataTypeEnum.Int16:
+                    buffer = Marshal.PtrToStructure(bufptr, typeof(BufferS16));
+                    break;
+                //case DataTypEnum.UInt16:
+                //    buffer = Marshal.PtrToStructure(bufptr, typeof(BufferU16));
+                //    break;
+                case DataTypeEnum.Int32:
+                    buffer = Marshal.PtrToStructure(bufptr, typeof(BufferS32));
+                    break;
+                //case DataTypEnum.UInt32:
+                //    buffer = Marshal.PtrToStructure(bufptr, typeof(BufferU32));
+                //    break;
+                case DataTypeEnum.Double:
+                    buffer = Marshal.PtrToStructure(bufptr, typeof(BufferDouble));
+                    break;
+            }
+            var ret = buffer.ReturnValue();
             Connector.FreeBuffer(bufptr).ThrowIfNotSuccess();
-            
-            return API.SUCCESS;
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //    if (ex.Message.Contains("Unable to load DLL"))
-            //        return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-            //    else
-            //        return API.UNDEFINED;
-            //}
-
-            //if (st == API.SUCCESS)
-            //{
-            //    try
-            //    {
-            //        operationStatus = Connector.UniDriverGetData(deviceHandle, (uint)mode, ref bufferS8);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine(ex.Message);
-            //        if (ex.Message.Contains("Unable to load DLL"))
-            //            return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-            //        else
-            //            return API.UNDEFINED;
-            //    }
-            //    st = (API)(operationStatus & MASK_RSH_ERROR);
-
-            //    if (st != API.SUCCESS) return st;
-
-
-            //    System.Runtime.InteropServices.Marshal.Copy(bufferS8.ptr, buffer, 0, (int)bufferS8.size);
-            //}
-
-            //return st;
+            return ret;
         }
-
-        //public API GetData(short[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
-        //{
-        //    uint operationStatus;
-        //    if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-        //    API st = API.SUCCESS;
-
-
-        //    try
-        //    {
-        //        st = (API)Connector.UniDriverAllocateBuffer(ref bufferS16, (uint)buffer.Length);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        if (ex.Message.Contains("Unable to load DLL"))
-        //            return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //        else
-        //            return API.UNDEFINED;
-        //    }
-
-        //    if (st == API.SUCCESS)
-        //    {
-        //        try
-        //        {
-        //            operationStatus = Connector.UniDriverGetData(deviceHandle, (uint)mode, ref bufferS16);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine(ex.Message);
-        //            if (ex.Message.Contains("Unable to load DLL"))
-        //                return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //            else
-        //                return API.UNDEFINED;
-        //        }
-        //        st = (API)(operationStatus & MASK_RSH_ERROR);
-
-        //        if (st != API.SUCCESS) return st;
-
-        //        System.Runtime.InteropServices.Marshal.Copy(bufferS16.ptr, buffer, 0, (int)bufferS16.size);
-        //    }
-
-        //    return st;
-        //}
-        //public API GetData(char[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
-        //{
-        //    uint operationStatus;
-        //    if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-        //    API st = API.SUCCESS;
-
-
-        //    try
-        //    {
-        //        st = (API)Connector.UniDriverAllocateBuffer(ref bufferS8, (uint)buffer.Length);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        if (ex.Message.Contains("Unable to load DLL"))
-        //            return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //        else
-        //            return API.UNDEFINED;
-        //    }
-
-        //    if (st == API.SUCCESS)
-        //    {
-        //        try
-        //        {
-        //            operationStatus = Connector.UniDriverGetData(deviceHandle, (uint)mode, ref bufferS8);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine(ex.Message);
-        //            if (ex.Message.Contains("Unable to load DLL"))
-        //                return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //            else
-        //                return API.UNDEFINED;
-        //        }
-        //        st = (API)(operationStatus & MASK_RSH_ERROR);
-
-        //        if (st != API.SUCCESS) return st;
-
-        //        System.Runtime.InteropServices.Marshal.Copy(bufferS8.ptr, buffer, 0, (int)bufferS8.size);
-        //    }
-
-        //    return st;
-        //}
-        //public API GetData(ushort[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
-        //{
-        //    uint operationStatus;
-        //    if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-        //    API st = API.SUCCESS;
-
-
-        //    try
-        //    {
-        //        st = (API)Connector.UniDriverAllocateBuffer(ref bufferU16, (uint)buffer.Length);
-        //        tmpBufferShort = new short[buffer.Length];
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        if (ex.Message.Contains("Unable to load DLL"))
-        //            return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //        else
-        //            return API.UNDEFINED;
-        //    }
-
-        //    if (st == API.SUCCESS)
-        //    {
-        //        try
-        //        {
-        //            operationStatus = Connector.UniDriverGetData(deviceHandle, (uint)mode, ref bufferU16);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine(ex.Message);
-        //            if (ex.Message.Contains("Unable to load DLL"))
-        //                return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //            else
-        //                return API.UNDEFINED;
-        //        }
-        //        st = (API)(operationStatus & MASK_RSH_ERROR);
-
-        //        if (st != API.SUCCESS) return st;
-
-        //        System.Runtime.InteropServices.Marshal.Copy(bufferU16.ptr, tmpBufferShort, 0, (int)bufferU16.size);
-        //        tmpBufferShort.CopyTo(buffer, 0);
-        //    }
-
-        //    return st;
-        //}
-        //public API GetData(double[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
-        //{
-        //    uint operationStatus;
-        //    if (deviceHandle == IntPtr.Zero) return API.DEVICE_DLLWASNOTLOADED;
-
-        //    API st = API.SUCCESS;
-
-
-        //    try
-        //    {
-        //        st = (API)Connector.UniDriverAllocateBuffer(ref bufferDouble, (uint)buffer.Length);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        if (ex.Message.Contains("Unable to load DLL"))
-        //            return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //        else
-        //            return API.UNDEFINED;
-        //    }
-
-        //    if (st == API.SUCCESS)
-        //    {
-        //        try
-        //        {
-        //            operationStatus = Connector.UniDriverGetData(deviceHandle, (uint)mode, ref bufferDouble);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine(ex.Message);
-        //            if (ex.Message.Contains("Unable to load DLL"))
-        //                return (API)(operationStatus = (uint)API.UNIDRIVER_DLLWASNOTLOADED);
-        //            else
-        //                return API.UNDEFINED;
-        //        }
-        //        st = (API)(operationStatus & MASK_RSH_ERROR);
-
-        //        if (st != API.SUCCESS) return st;
-
-        //        System.Runtime.InteropServices.Marshal.Copy(bufferDouble.ptr, buffer, 0, (int)bufferDouble.size);
-        //    }
-
-        //    return st;
-        //}
+        
         //public API SetData(short[] buffer, DATA_MODE mode = DATA_MODE.NO_FLAGS)
         //{
         //    uint operationStatus;
@@ -665,50 +440,6 @@ namespace RshCSharpWrapper.Device
             api.ThrowIfNotSuccess();
 
             return ret;
-            //Что возвращаем?
-            //switch (mode_attr.Name)
-            //{
-            //    case Types.Names.BoardPortInfo:
-            //        if (tmp.totalConfs != 0)
-            //        {
-            //            tmp.confs = new PortInfo[tmp.totalConfs];
-            //            for (int i = 0; i < tmp.confs.Length; i++)
-            //            {
-            //                tmp.confs[i] = new PortInfo();
-            //                tmp.confs[i].address = tmp.confs[i].address;
-            //                tmp.confs[i].bitSize = tmp.confs[i].bitSize;
-            //                string str = System.Text.Encoding.UTF8.GetString(tmp.confs[i].name);
-            //                tmp.confs[i].name = str.Substring(0, str.IndexOf('\0'));
-            //            }
-            //        }
-
-            //        if (tmp.totalPorts != 0)
-            //        {
-            //            tmp.ports = new PortInfo[tmp.totalPorts];
-            //            for (int i = 0; i < tmp.ports.Length; i++)
-            //            {
-            //                tmp.ports[i] = new PortInfo();
-            //                tmp.ports[i].address = tmp.ports[i].address;
-            //                tmp.ports[i].bitSize = tmp.ports[i].bitSize;
-            //                string str = System.Text.Encoding.UTF8.GetString(tmp.ports[i].name);
-            //                tmp.ports[i].name = str.Substring(0, str.IndexOf('\0'));
-            //            }
-            //        }
-            //        return tmp;
-            //    default:
-            //        return null;
-            //}
-
-
-            /*if (type == typeof(Types.BufferU32)) //TODO: Понять как работать с буферами
-            {
-                var tmp = new Types.BufferU32(0);                
-                uint rec = 10;
-                var operationStatus = Connector.UniDriverLVGetArrayUInt(deviceHandle, (uint)mode, 10, ref rec, ref tmp);
-                ErrorHandling(operationStatus, ref result);
-                //var vvv = Marshal.PtrToStructure(tmp.ptr,typeof(test));
-                return tmp;
-            }*/
         }
 
         /// <summary>

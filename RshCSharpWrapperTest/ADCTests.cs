@@ -20,7 +20,7 @@ namespace RshCSharpWrapperTest
         //TODO: Когда прогоняете тесты, убедитесь что ваша плата может работать при указанных ниже параметрах.
         
         //Размер собираемого блока данных в отсчётах (на канал).
-        const uint BSIZE = 10000;
+        const uint BSIZE = 500000;
         //Частота дискретизации. 
         const double SAMPLE_FREQ = 1.0e+8;
 
@@ -168,26 +168,15 @@ namespace RshCSharpWrapperTest
                     //{
                         device.Stop();
 
-                        //Буфер с данными в мзр.
-                        short[] userBuffer = new short[p.bufferSize * activeChannelsCount];
-                        //Буфер с данными в вольтах.
-                        double[] userBufferD = new double[p.bufferSize * activeChannelsCount];
-
-                        byte[] userBufferB = new byte[p.bufferSize * activeChannelsCount];
-
                         //Получаем буфер с данными.
-                        device.GetData(userBuffer);
+                        var ret1 = device.GetData(Device.DataTypeEnum.Int16,p.bufferSize * activeChannelsCount);
+                        //var ret2 = device.GetData(Device.DataTypEnum.UInt16, p.bufferSize * activeChannelsCount);
+                        var ret3 = device.GetData(Device.DataTypeEnum.Int32, p.bufferSize * activeChannelsCount);
+                        //var ret4 = device.GetData(Device.DataTypEnum.UInt32, p.bufferSize * activeChannelsCount);
+                        var ret5 = device.GetData(Device.DataTypeEnum.Double, p.bufferSize * activeChannelsCount);
+                        var ret6 = device.GetData(Device.DataTypeEnum.Int8, p.bufferSize * activeChannelsCount);
+                        var ret7 = device.GetData(Device.DataTypeEnum.UInt8, p.bufferSize * activeChannelsCount);
 
-                        ////Получаем буфер с данными. В этом буфере будут те же самые данные, но преобразованные в вольты.
-                        //device.GetData(userBufferD);
-
-                        //device.GetData(userBufferB);
-
-                        //sbyte[] userBufferSB = new sbyte[userBufferB.Length];
-                        //Buffer.BlockCopy(userBufferB, 0, userBufferSB, 0, userBufferB.Length);
-                        //// Выведем в консоль данные в вольтах. (первые 10 измерений)
-                        //for (int i = 0; i < 10; i++)
-                        //    Console.WriteLine(userBufferD[i].ToString());
                     //}
                 }
         }        

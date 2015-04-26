@@ -4,21 +4,19 @@ using System.Runtime.InteropServices;
 namespace RshCSharpWrapper.Types
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal struct BufferS16
+    internal class BufferS16 : IReturn, IBuffer
     {
-        private Names typeName;  //!< тип данных буфера
-        public uint size;  //!< данное поле используется после вызова UniDriverGetData(), чтобы отразить реальное количество скопированных данных в буфер
-        public uint psize; //!< количество элементов в буфере
-        private uint id;
-        public IntPtr ptr;   //!< указатель на буфер
-
-        public BufferS16(uint size)
+        private Names typeName = Names.BufferS16;  //!< тип данных буфера
+        public uint size = 0 ;  //!< данное поле используется после вызова UniDriverGetData(), чтобы отразить реальное количество скопированных данных в буфер
+        public uint psize = 0; //!< количество элементов в буфере
+        private uint id = 0;
+        public IntPtr ptr = IntPtr.Zero;   //!< указатель на буфер
+        
+        public dynamic ReturnValue()
         {
-            typeName = Names.BufferS16;
-            this.size = size;
-            psize = 0;
-            ptr = IntPtr.Zero;
-            id = 0;
+            var tmpBufferInt = new short[(int)size];
+            Marshal.Copy(ptr, tmpBufferInt, 0, (int)size);
+            return tmpBufferInt;
         }
     };
 }
