@@ -18,13 +18,6 @@ namespace RshCSharpWrapperTest
     [TestClass]
     public class ADCTests
     {
-        //TODO: Когда прогоняете тесты, убедитесь что ваша плата может работать при указанных ниже параметрах.
-        
-        //Размер собираемого блока данных в отсчётах (на канал).
-        const uint BSIZE = 500000;
-        //Частота дискретизации. 
-        const double SAMPLE_FREQ = 1.0e+8;
-
         [TestMethod]
         public void GetADCList()
         {
