@@ -163,7 +163,7 @@ namespace RshCSharpWrapperTest
                             //var ret2 = device.GetData(Device.DataTypEnum.UInt16);//Throws
                             //var ret3 = device.GetData(Device.DataTypeEnum.Int32);
                             //var ret4 = device.GetData(Device.DataTypEnum.UInt32);//Throws
-                            var ret5 = device.GetData(Device.DataTypeEnum.Double);
+                            var ret5 = device.GetData(DataType.Double);
                             //var ret6 = device.GetData(Device.DataTypeEnum.Int8);
                             //var ret7 = device.GetData(Device.DataTypeEnum.UInt8);
                         }

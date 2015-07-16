@@ -286,42 +286,32 @@ namespace RshCSharpWrapper.Device
             Connector.Stop(_handle).ThrowIfNotSuccess();        
         }
 
-        public enum DataTypeEnum
-        {
-            Int8,
-            UInt8,
-            Int16,
-            //UInt16,
-            Int32,
-            //UInt32,
-            Double
-        }
-        public dynamic GetData(DataTypeEnum type, DATA_MODE mode = DATA_MODE.NO_FLAGS)
+        public dynamic GetData(DataType type, DATA_MODE mode = DATA_MODE.NO_FLAGS)
         {
             _handle.ThrowIfDeviceHandleNotOK();
             uint size = Get(GET.DEVICE_ACTIVE_CHANNELS_NUMBER) * currentInitStructure.BufferSize;
             dynamic buffer;
             switch (type)
             {
-                case DataTypeEnum.Int8:
+                case DataType.Int8:
                     buffer = new BufferS8();
                     break;
-                case DataTypeEnum.UInt8:
+                case DataType.UInt8:
                     buffer = new BufferS8();
                     break;
-                case DataTypeEnum.Int16:
+                case DataType.Int16:
                     buffer = new BufferS16();
                 break;
                 //case DataTypEnum.UInt16:
                 //    buffer = new BufferU16();
                 //break;
-                case DataTypeEnum.Int32:
+                case DataType.Int32:
                     buffer = new BufferS32();
                 break;
                 //case DataTypEnum.UInt32:
                 //    buffer = new BufferU32();
                 //break;
-                case DataTypeEnum.Double:
+                case DataType.Double:
                     buffer = new BufferDouble();
                 break;
                 default:
@@ -334,25 +324,25 @@ namespace RshCSharpWrapper.Device
             Connector.GetData(_handle, mode, bufptr).ThrowIfNotSuccess();
             switch (type)
             {
-                case DataTypeEnum.Int8:
+                case DataType.Int8:
                     buffer = Marshal.PtrToStructure(bufptr, typeof(BufferS8));
                     break;
-                case DataTypeEnum.UInt8:
+                case DataType.UInt8:
                     buffer = Marshal.PtrToStructure(bufptr, typeof(BufferU8));
                     break;
-                case DataTypeEnum.Int16:
+                case DataType.Int16:
                     buffer = Marshal.PtrToStructure(bufptr, typeof(BufferS16));
                     break;
                 //case DataTypEnum.UInt16:
                 //    buffer = Marshal.PtrToStructure(bufptr, typeof(BufferU16));
                 //    break;
-                case DataTypeEnum.Int32:
+                case DataType.Int32:
                     buffer = Marshal.PtrToStructure(bufptr, typeof(BufferS32));
                     break;
                 //case DataTypEnum.UInt32:
                 //    buffer = Marshal.PtrToStructure(bufptr, typeof(BufferU32));
                 //    break;
-                case DataTypeEnum.Double:
+                case DataType.Double:
                     buffer = Marshal.PtrToStructure(bufptr, typeof(BufferDouble));
                     break;
             }
