@@ -21,15 +21,16 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetADCList()
         {
-            var result = Device.GetRegisteredDeviceNames();
+            var result = new DeviceFactory().GetRegisteredDeviceNames();
             Assert.IsFalse(result.Count == 0, "There is no boards installed on this machine.");
         }
 
         [TestMethod]
         public void GetGainList()
         {
-            foreach (var deviceName in Device.GetRegisteredDeviceNames())
-                using (var device = new Device(deviceName))
+            var df = new DeviceFactory();
+            foreach (var deviceName in df.GetRegisteredDeviceNames())
+                using (var device = df.GetDevice(deviceName))
                 {
                     var list = device.Get(GET.DEVICE_GAIN_LIST);
                 }
@@ -38,9 +39,10 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetBaseAddressList()
         {
-            foreach (var deviceName in Device.GetRegisteredDeviceNames())
+            var df = new DeviceFactory();
+            foreach (var deviceName in df.GetRegisteredDeviceNames())
             {
-                using (var device = new Device(deviceName))
+                using (var device = df.GetDevice(deviceName))
                 {
                     var list = device.Get(GET.DEVICE_BASE_LIST);                    
                 }
@@ -50,8 +52,9 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetParameters()
         {
-            foreach (var deviceName in Device.GetRegisteredDeviceNames())
-                using (var device = new Device(deviceName))
+            var df = new DeviceFactory();
+            foreach (var deviceName in df.GetRegisteredDeviceNames())
+                using (var device = df.GetDevice(deviceName))
                 {                
                     var types = new List<Type>
                     {
@@ -102,8 +105,9 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void IsCapable()
         {
-            foreach (var deviceName in Device.GetRegisteredDeviceNames())
-                using (var device = new Device(deviceName))
+            var df = new DeviceFactory();
+            foreach (var deviceName in df.GetRegisteredDeviceNames())
+                using (var device = df.GetDevice(deviceName))
                 {
                     string res = "";
                     foreach (CAPS cap in Enum.GetValues(typeof(CAPS)))
@@ -115,10 +119,11 @@ namespace RshCSharpWrapperTest
         [TestMethod]
         public void GetDataFromDriver()
         {
+            var df = new DeviceFactory();
             var r = new Random();
-            foreach (var deviceName in Device.GetRegisteredDeviceNames())
+            foreach (var deviceName in df.GetRegisteredDeviceNames())
                 if(deviceName=="LAN4USB")//!?
-                using (var device = new Device(deviceName))
+                using (var device = df.GetDevice(deviceName))
                 {
                     var gains = (uint[])device.Get(GET.DEVICE_GAIN_LIST);
                     var freqs = (double[])device.Get(GET.DEVICE_FREQUENCY_LIST);

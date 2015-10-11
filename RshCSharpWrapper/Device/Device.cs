@@ -466,10 +466,5 @@ namespace RshCSharpWrapper.Device
                 return false;
             }            
         }       
-                
-        public static List<string> GetRegisteredDeviceNames()
-        {
-            return Connector.GetRegisteredDeviceNames().ToList();
-        }
     };
 }
