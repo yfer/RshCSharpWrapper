@@ -9,7 +9,14 @@ namespace RshCSharpWrapper.Device
     {
         public List<string> GetRegisteredDeviceNames()
         {
-            return Connector.GetRegisteredDeviceNames().ToList();
+            try
+            {
+                return Connector.GetRegisteredDeviceNames().ToList();
+            }
+            catch (Exception ex)
+            {
+                return new List<string>();
+            }
         }
 
         public Device GetDevice(string Name)
